@@ -1,13 +1,14 @@
 package handler
 
 import (
+	"go-musthave-diploma-tpl/internal/logger"
+	"go-musthave-diploma-tpl/internal/service"
 	"net/http"
-
-	"github.com/rs/zerolog"
 )
 
 type Handlers struct {
-	logger *zerolog.Logger
+	logger      *logger.Logger
+	authService service.AuthService
 }
 
 func (h *Handlers) order(writer http.ResponseWriter, request *http.Request) {
@@ -30,6 +31,10 @@ func (h *Handlers) getWithdrawals(writer http.ResponseWriter, request *http.Requ
 	// TODO: implement me!
 }
 
-func NewHandler(logger *zerolog.Logger) Handlers {
-	return Handlers{logger: logger}
+func NewHandler(services *service.Services, logger *logger.Logger) Handlers {
+	logger.Info().Msg("handler created")
+	return Handlers{
+		authService: services.AuthService,
+		logger:      logger,
+	}
 }

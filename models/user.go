@@ -1,8 +1,8 @@
 package models
 
 type User struct {
-	Login        string `gorm:"column:login" json:"login"`
-	PasswordHash string `gorm:"column:password_hash" json:"password"`
+	Login    string `gorm:"column:login" json:"login"`
+	Password string `gorm:"column:password_hash" json:"password"`
 }
 
 func (u User) TableName() string {

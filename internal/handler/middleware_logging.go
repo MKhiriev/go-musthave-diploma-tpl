@@ -35,7 +35,7 @@ func (h *Handler) logging(handler http.Handler) http.Handler {
 
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
-			h.logger.Err(err).Str("func", "*Handler.WithHashing").Msg("failed to read request body")
+			h.logger.Err(err).Msg("failed to read request body")
 			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}

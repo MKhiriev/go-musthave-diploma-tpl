@@ -32,5 +32,5 @@ func main() {
 	srv := new(server.Server)
 
 	log.Info().Msg("Server started")
-	_ = srv.ServerRun(myHandler.Init(), cfg)
+	_ = srv.ServerRun(myHandler.Init(cfg.Server.RequestTimeout), &cfg.Server)
 }

@@ -1,13 +1,15 @@
 package handler
 
 import (
+	"time"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func (h *Handler) Init() *chi.Mux {
+func (h *Handler) Init(requestTimeout time.Duration) *chi.Mux {
 	router := chi.NewRouter()
-	router.Use(middleware.Recoverer, h.logging)
+	router.Use(middleware.Recoverer, h.logging, withRequestTimeout(requestTimeout))
 
 	// routes without authorization
 	router.Group(func(r chi.Router) {

@@ -32,7 +32,7 @@ func (r *DBUserRepository) CreateUser(user models.User) error {
 	if errors.As(err, &pgErr) {
 		switch pgErr.Code {
 		case pgerrcode.UniqueViolation:
-			return LoginAlreadyExistsError
+			return ErrLoginAlreadyExists
 		default:
 			return fmt.Errorf("unexpected DB error: %w", err)
 		}

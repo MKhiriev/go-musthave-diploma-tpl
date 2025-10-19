@@ -21,11 +21,11 @@ func (h *Handlers) register(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		switch {
-		case errors.Is(err, service.InvalidDataProvidedError):
+		case errors.Is(err, service.ErrInvalidDataProvided):
 			h.logger.Err(err).Msg("invalid data provided")
 			http.Error(w, "invalid data provided", http.StatusBadRequest)
 			return
-		case errors.Is(err, store.LoginAlreadyExistsError):
+		case errors.Is(err, store.ErrLoginAlreadyExists):
 			h.logger.Err(err).Msg("login already exists")
 			http.Error(w, "login already exists", http.StatusConflict)
 			return

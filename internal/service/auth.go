@@ -28,7 +28,7 @@ func NewAuthService(userRepository store.UserRepository, cfg *config.Auth, logge
 func (a *authService) RegisterUser(user models.User) error {
 	if user.Login == "" || user.Password == "" {
 		a.logger.Error().Any("user", user).Msg("invalid user data provided")
-		return InvalidDataProvidedError
+		return ErrInvalidDataProvided
 	}
 
 	a.hashPassword(&user)

@@ -12,6 +12,7 @@ type Services struct {
 }
 
 func NewServices(database *store.Database, cfg *config.Config, logger *logger.Logger) *Services {
+	defer logger.Info().Msg("services are initialized")
 	return &Services{
 		AuthService: NewAuthService(database.UserRepository, &cfg.Auth, logger),
 	}

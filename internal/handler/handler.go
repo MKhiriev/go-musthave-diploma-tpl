@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	"net/http"
+
 	"github.com/rs/zerolog"
 )
 
@@ -10,13 +10,26 @@ type Handlers struct {
 	logger *zerolog.Logger
 }
 
-func NewHandler(logger *zerolog.Logger) Handlers {
-	return Handlers{logger: logger}
+func (h *Handlers) order(writer http.ResponseWriter, request *http.Request) {
+	// TODO: implement me!
 }
 
-func (h *Handlers) Init() *chi.Mux {
-	router := chi.NewRouter()
-	router.Use(middleware.Recoverer)
+func (h *Handlers) getOrders(writer http.ResponseWriter, request *http.Request) {
+	// TODO: implement me!
+}
 
-	return router
+func (h *Handlers) getBalance(writer http.ResponseWriter, request *http.Request) {
+	// TODO: implement me!
+}
+
+func (h *Handlers) withdraw(writer http.ResponseWriter, request *http.Request) {
+	// TODO: implement me!
+}
+
+func (h *Handlers) getWithdrawals(writer http.ResponseWriter, request *http.Request) {
+	// TODO: implement me!
+}
+
+func NewHandler(logger *zerolog.Logger) Handlers {
+	return Handlers{logger: logger}
 }

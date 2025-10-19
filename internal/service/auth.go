@@ -42,6 +42,31 @@ func (a *authService) RegisterUser(user models.User) error {
 	return nil
 }
 
+func (a *authService) Login(user models.User) (models.User, error) {
+	if user.Login == "" || user.Password == "" {
+		a.logger.Error().Any("user", user).Msg("invalid user data provided")
+		return models.User{}, ErrInvalidDataProvided
+	}
+
+	a.hashPassword(&user)
+	foundUser, err := a.userRepository.FindUserByLogin(user)
+	if err != nil {
+		a.logger.Err(err).Any("user", user).Msg("user search by login failed")
+		return models.User{}, fmt.Errorf("user search by login failed: %w", err)
+	}
+
+	if foundUser.Password != user.Password {
+		a.logger.Err(err).
+			Str("login", foundUser.Login).
+			Str("input", user.Password).
+			Str("actual password", foundUser.Password).
+			Msg("wrong password")
+		return models.User{}, ErrWrongPassword
+	}
+
+	return foundUser, nil
+}
+
 func (a *authService) hashPassword(user *models.User) {
 	user.Password = hex.EncodeToString(
 		utils.Hash([]byte(user.Password), a.hashKey),

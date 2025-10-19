@@ -11,23 +11,23 @@ type Handlers struct {
 	authService service.AuthService
 }
 
-func (h *Handlers) order(writer http.ResponseWriter, request *http.Request) {
+func (h *Handlers) order(w http.ResponseWriter, r *http.Request) {
 	// TODO: implement me!
 }
 
-func (h *Handlers) getOrders(writer http.ResponseWriter, request *http.Request) {
+func (h *Handlers) getOrders(w http.ResponseWriter, r *http.Request) {
 	// TODO: implement me!
 }
 
-func (h *Handlers) getBalance(writer http.ResponseWriter, request *http.Request) {
+func (h *Handlers) getBalance(w http.ResponseWriter, r *http.Request) {
 	// TODO: implement me!
 }
 
-func (h *Handlers) withdraw(writer http.ResponseWriter, request *http.Request) {
+func (h *Handlers) withdraw(w http.ResponseWriter, r *http.Request) {
 	// TODO: implement me!
 }
 
-func (h *Handlers) getWithdrawals(writer http.ResponseWriter, request *http.Request) {
+func (h *Handlers) getWithdrawals(w http.ResponseWriter, r *http.Request) {
 	// TODO: implement me!
 }
 

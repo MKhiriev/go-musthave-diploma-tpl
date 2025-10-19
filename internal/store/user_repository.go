@@ -25,7 +25,7 @@ func NewDBUserRepository(db *gorm.DB, logger *logger.Logger) UserRepository {
 }
 
 func (r *DBUserRepository) CreateUser(user models.User) error {
-	err := r.db.Create(user).Error
+	err := r.db.Create(&user).Error
 
 	var pgErr *pgconn.PgError
 	// if postgres returns error
@@ -39,4 +39,22 @@ func (r *DBUserRepository) CreateUser(user models.User) error {
 	}
 
 	return err
+}
+
+func (r *DBUserRepository) FindUserByLogin(user models.User) (models.User, error) {
+	var foundUser models.User
+	err := r.db.Find(&foundUser, "login", user.Login).Error
+
+	var pgErr *pgconn.PgError
+	// if postgres returns error
+	if errors.As(err, &pgErr) {
+		switch pgErr.Code {
+		case pgerrcode.UniqueViolation:
+			return models.User{}, ErrLoginAlreadyExists
+		default:
+			return models.User{}, fmt.Errorf("unexpected DB error: %w", err)
+		}
+	}
+
+	return foundUser, err
 }

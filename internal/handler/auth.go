@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func (h *Handlers) register(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		h.logger.Err(err).Msg("Invalid JSON was passed")
@@ -39,7 +39,7 @@ func (h *Handlers) register(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *Handlers) login(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		h.logger.Err(err).Msg("Invalid JSON was passed")

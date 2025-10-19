@@ -5,7 +5,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-func (h *Handlers) Init() *chi.Mux {
+func (h *Handler) Init() *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(middleware.Recoverer, h.logging)
 
@@ -25,6 +25,8 @@ func (h *Handlers) Init() *chi.Mux {
 		r.Post("/api/user/balance/withdraw", h.withdraw) // запрос на списание баллов с накопительного счёта в счёт оплаты нового заказа
 		r.Get("/api/user/withdrawals", h.getWithdrawals) // получение информации о выводе средств с накопительного счёта пользователем
 	})
+
+	router.MethodNotAllowed(CheckHTTPMethod(router))
 
 	return router
 }

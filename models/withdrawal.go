@@ -8,3 +8,7 @@ type Withdrawal struct {
 	Sum          float64   `gorm:"column:sum" json:"sum"`
 	ProcessedAt  time.Time `gorm:"column:processed_at" json:"processed_at"`
 }
+
+func (u Withdrawal) TableName() string {
+	return "withdrawals"
+}

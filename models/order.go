@@ -13,3 +13,11 @@ type Status struct {
 	StatusId int64  `gorm:"column:status_id"`
 	Name     string `gorm:"column:name"`
 }
+
+func (u Order) TableName() string {
+	return "orders"
+}
+
+func (u Status) TableName() string {
+	return "statuses"
+}

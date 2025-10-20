@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"encoding/hex"
 	"fmt"
 	"go-musthave-diploma-tpl/internal/config"
@@ -25,14 +26,14 @@ func NewAuthService(userRepository store.UserRepository, cfg *config.Auth, logge
 	}
 }
 
-func (a *authService) RegisterUser(user models.User) error {
+func (a *authService) RegisterUser(ctx context.Context, user models.User) error {
 	if user.Login == "" || user.Password == "" {
 		a.logger.Error().Any("user", user).Msg("invalid user data provided")
 		return ErrInvalidDataProvided
 	}
 
 	a.hashPassword(&user)
-	err := a.userRepository.CreateUser(user)
+	err := a.userRepository.CreateUser(ctx, user)
 
 	if err != nil {
 		a.logger.Err(err).Any("user", user).Msg("user creation ended with error")
@@ -42,14 +43,14 @@ func (a *authService) RegisterUser(user models.User) error {
 	return nil
 }
 
-func (a *authService) Login(user models.User) (models.User, error) {
+func (a *authService) Login(ctx context.Context, user models.User) (models.User, error) {
 	if user.Login == "" || user.Password == "" {
 		a.logger.Error().Any("user", user).Msg("invalid user data provided")
 		return models.User{}, ErrInvalidDataProvided
 	}
 
 	a.hashPassword(&user)
-	foundUser, err := a.userRepository.FindUserByLogin(user)
+	foundUser, err := a.userRepository.FindUserByLogin(ctx, user)
 	if err != nil {
 		a.logger.Err(err).Any("user", user).Msg("user search by login failed")
 		return models.User{}, fmt.Errorf("user search by login failed: %w", err)

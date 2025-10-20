@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"go-musthave-diploma-tpl/internal/logger"
@@ -24,8 +25,8 @@ func NewDBUserRepository(db *gorm.DB, logger *logger.Logger) UserRepository {
 	}
 }
 
-func (r *DBUserRepository) CreateUser(user models.User) error {
-	err := r.db.Create(&user).Error
+func (r *DBUserRepository) CreateUser(ctx context.Context, user models.User) error {
+	err := r.db.WithContext(ctx).Create(&user).Error
 
 	var pgErr *pgconn.PgError
 	// if postgres returns error
@@ -41,9 +42,9 @@ func (r *DBUserRepository) CreateUser(user models.User) error {
 	return err
 }
 
-func (r *DBUserRepository) FindUserByLogin(user models.User) (models.User, error) {
+func (r *DBUserRepository) FindUserByLogin(ctx context.Context, user models.User) (models.User, error) {
 	var foundUser models.User
-	err := r.db.Find(&foundUser, "login", user.Login).Error
+	err := r.db.WithContext(ctx).Find(&foundUser, "login", user.Login).Error
 
 	var pgErr *pgconn.PgError
 	// if postgres returns error

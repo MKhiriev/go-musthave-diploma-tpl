@@ -1,8 +1,11 @@
 package store
 
-import "go-musthave-diploma-tpl/models"
+import (
+	"context"
+	"go-musthave-diploma-tpl/models"
+)
 
 type UserRepository interface {
-	CreateUser(user models.User) error
-	FindUserByLogin(user models.User) (models.User, error)
+	CreateUser(ctx context.Context, user models.User) error
+	FindUserByLogin(ctx context.Context, user models.User) (models.User, error)
 }

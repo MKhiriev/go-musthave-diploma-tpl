@@ -10,6 +10,8 @@ import (
 )
 
 func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		h.logger.Err(err).Msg("Invalid JSON was passed")
@@ -17,7 +19,7 @@ func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.authService.RegisterUser(user)
+	err := h.authService.RegisterUser(ctx, user)
 
 	if err != nil {
 		switch {
@@ -40,6 +42,8 @@ func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
 		h.logger.Err(err).Msg("Invalid JSON was passed")
@@ -48,7 +52,7 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 	}
 	h.logger.Debug().Any("received user info", user).Send()
 
-	foundUser, err := h.authService.Login(user)
+	foundUser, err := h.authService.Login(ctx, user)
 	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrInvalidDataProvided):

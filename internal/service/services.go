@@ -8,12 +8,13 @@ import (
 
 type Services struct {
 	AuthService
-	logger *logger.Logger
+	BalanceService
 }
 
 func NewServices(database *store.Database, cfg *config.Config, logger *logger.Logger) *Services {
 	defer logger.Info().Msg("services are initialized")
 	return &Services{
-		AuthService: NewAuthService(database.UserRepository, &cfg.Auth, logger),
+		AuthService:    NewAuthService(database.UserRepository, &cfg.Auth, logger),
+		BalanceService: NewBalanceService(database.BalanceRepository, logger),
 	}
 }

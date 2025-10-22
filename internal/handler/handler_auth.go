@@ -70,8 +70,15 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	h.logger.Debug().Any("found user", foundUser).Msg("user successfully logged in")
+	h.logger.Debug().Int64("id", foundUser.UserId).Any("found user", foundUser).Msg("user successfully logged in")
 
-	// TODO add JWT token
+	token, err := h.authService.CreateToken(ctx, foundUser)
+	if err != nil {
+		h.logger.Err(err).Msg("creation of token failed")
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write([]byte(token.SignedString))
 }

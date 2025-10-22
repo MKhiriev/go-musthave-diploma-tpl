@@ -7,11 +7,13 @@ import (
 )
 
 type Database struct {
-	UserRepository UserRepository
+	UserRepository    UserRepository
+	BalanceRepository BalanceRepository
 }
 
 func NewDatabase(db *gorm.DB, logger *logger.Logger) (*Database, error) {
 	return &Database{
-		UserRepository: NewDBUserRepository(db, logger),
+		UserRepository:    NewDBUserRepository(db, logger),
+		BalanceRepository: NewBalanceRepository(db, logger),
 	}, nil
 }

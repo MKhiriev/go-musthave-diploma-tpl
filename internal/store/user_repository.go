@@ -50,8 +50,8 @@ func (r *DBUserRepository) FindUserByLogin(ctx context.Context, user models.User
 	// if postgres returns error
 	if errors.As(err, &pgErr) {
 		switch pgErr.Code {
-		case pgerrcode.UniqueViolation:
-			return models.User{}, ErrLoginAlreadyExists
+		case pgerrcode.NoDataFound:
+			return models.User{}, ErrUserNotFound
 		default:
 			return models.User{}, fmt.Errorf("unexpected DB error: %w", err)
 		}

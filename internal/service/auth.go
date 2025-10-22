@@ -2,18 +2,21 @@ package service
 
 import (
 	"context"
-	"encoding/hex"
 	"fmt"
 	"go-musthave-diploma-tpl/internal/config"
 	"go-musthave-diploma-tpl/internal/logger"
 	"go-musthave-diploma-tpl/internal/store"
 	"go-musthave-diploma-tpl/internal/utils"
 	"go-musthave-diploma-tpl/models"
+	"time"
 )
 
 type authService struct {
 	userRepository store.UserRepository
 	hashKey        string
+	tokenSignKey   string
+	tokenIssuer    string
+	tokenDuration  time.Duration
 
 	logger *logger.Logger
 }
@@ -22,6 +25,9 @@ func NewAuthService(userRepository store.UserRepository, cfg *config.Auth, logge
 	return &authService{
 		userRepository: userRepository,
 		hashKey:        cfg.PasswordHashKey,
+		tokenSignKey:   cfg.TokenSignKey,
+		tokenIssuer:    cfg.TokenIssuer,
+		tokenDuration:  time.Duration(cfg.TokenDuration) * time.Hour,
 		logger:         logger,
 	}
 }
@@ -58,6 +64,7 @@ func (a *authService) Login(ctx context.Context, user models.User) (models.User,
 
 	if foundUser.Password != user.Password {
 		a.logger.Err(err).
+			Int64("id", foundUser.UserId).
 			Str("login", foundUser.Login).
 			Str("input", user.Password).
 			Str("actual password", foundUser.Password).
@@ -68,8 +75,24 @@ func (a *authService) Login(ctx context.Context, user models.User) (models.User,
 	return foundUser, nil
 }
 
+func (a *authService) CreateToken(ctx context.Context, user models.User) (models.Token, error) {
+	token, err := utils.GenerateJWTToken(a.tokenIssuer, user.UserId, a.tokenDuration, a.tokenSignKey)
+	if err != nil {
+		return models.Token{}, fmt.Errorf("error creating JWT token: %w", err)
+	}
+
+	return token, nil
+}
+
+func (a *authService) ParseToken(ctx context.Context, tokenString string) (models.Token, error) {
+	token, err := utils.ValidateAndParseJWTToken(tokenString, a.tokenSignKey, a.tokenIssuer)
+	if err != nil {
+		return models.Token{}, fmt.Errorf("error parsing JWT token: %w", err)
+	}
+
+	return token, nil
+}
+
 func (a *authService) hashPassword(user *models.User) {
-	user.Password = hex.EncodeToString(
-		utils.Hash([]byte(user.Password), a.hashKey),
-	)
+	user.Password = utils.HashString(user.Password, a.hashKey)
 }

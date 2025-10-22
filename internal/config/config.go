@@ -8,6 +8,9 @@ type DBConfig struct {
 
 type Auth struct {
 	PasswordHashKey string
+	TokenSignKey    string
+	TokenIssuer     string
+	TokenDuration   int64
 }
 
 type Server struct {
@@ -24,7 +27,7 @@ type Config struct {
 // TODO add env and cmd params
 func GetConfigs() *Config {
 	return &Config{
-		Auth:   Auth{PasswordHashKey: "hash"},
+		Auth:   Auth{PasswordHashKey: "hash", TokenSignKey: "token", TokenIssuer: "gophermart", TokenDuration: 2},
 		Server: Server{ServerAddress: "localhost:8080", RequestTimeout: time.Duration(10) * time.Second},
 		DB:     DBConfig{DSN: "postgres://postgres:postgrespassword@localhost:5432/praktikum?sslmode=disable"},
 	}

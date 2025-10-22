@@ -14,10 +14,19 @@ func (h *Handler) logging(handler http.Handler) http.Handler {
 		uri := r.RequestURI
 		method := r.Method
 
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			h.logger.Err(err).Msg("failed to read request body")
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+		r.Body = io.NopCloser(bytes.NewReader(body))
+
 		h.logger.Info().
 			Str("uri", uri).
 			Str("method", method).
 			Any("headers", r.Header).
+			Bytes("body", body).
 			Msg("incoming request")
 
 		responseData := &responseData{
@@ -33,7 +42,7 @@ func (h *Handler) logging(handler http.Handler) http.Handler {
 
 		duration := time.Since(start)
 
-		body, err := io.ReadAll(r.Body)
+		body, err = io.ReadAll(r.Body)
 		if err != nil {
 			h.logger.Err(err).Msg("failed to read request body")
 			w.WriteHeader(http.StatusInternalServerError)

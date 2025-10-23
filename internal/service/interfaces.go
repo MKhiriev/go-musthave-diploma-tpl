@@ -15,3 +15,7 @@ type AuthService interface {
 type BalanceService interface {
 	GetBalanceByUserId(ctx context.Context, userId int64) (models.Balance, error)
 }
+
+type OrderService interface {
+	AddOrder(ctx context.Context, userId int64, orderNumber string) error
+}

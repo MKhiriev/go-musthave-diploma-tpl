@@ -9,6 +9,7 @@ import (
 type Services struct {
 	AuthService
 	BalanceService
+	OrderService
 }
 
 func NewServices(database *store.Database, cfg *config.Auth, logger *logger.Logger) *Services {
@@ -16,5 +17,6 @@ func NewServices(database *store.Database, cfg *config.Auth, logger *logger.Logg
 	return &Services{
 		AuthService:    NewAuthService(database.UserRepository, cfg, logger),
 		BalanceService: NewBalanceService(database.BalanceRepository, logger),
+		OrderService:   NewOrderService(database.OrderRepository, logger),
 	}
 }

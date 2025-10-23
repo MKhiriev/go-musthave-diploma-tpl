@@ -3,6 +3,7 @@ package handler
 import (
 	"context"
 	"errors"
+	"go-musthave-diploma-tpl/internal/service"
 	"go-musthave-diploma-tpl/internal/utils"
 	"net/http"
 	"strings"
@@ -30,9 +31,9 @@ func (h *Handler) auth(next http.Handler) http.Handler {
 
 		if err != nil {
 			switch {
-			case errors.Is(err, ErrTokenIsExpired):
+			case errors.Is(err, service.ErrTokenIsExpired):
 				h.logger.Err(err).Msg("token expired")
-				http.Error(w, ErrTokenIsExpired.Error(), http.StatusUnauthorized)
+				http.Error(w, service.ErrTokenIsExpired.Error(), http.StatusUnauthorized)
 				return
 			default:
 				h.logger.Err(err).Msg("error occurred during parsing token")

@@ -13,3 +13,7 @@ type UserRepository interface {
 type BalanceRepository interface {
 	FindBalanceByUserId(ctx context.Context, userId int64) (models.Balance, error)
 }
+
+type OrderRepository interface {
+	CreateOrderOrGetExisting(ctx context.Context, userId int64, orderNumber string) (models.Order, error)
+}

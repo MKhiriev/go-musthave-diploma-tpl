@@ -1,0 +1,45 @@
+package service
+
+import (
+	"context"
+	"fmt"
+	"go-musthave-diploma-tpl/internal/logger"
+	"go-musthave-diploma-tpl/internal/store"
+	"go-musthave-diploma-tpl/internal/utils"
+)
+
+type orderService struct {
+	orderRepository store.OrderRepository
+	logger          *logger.Logger
+}
+
+func NewOrderService(orderRepository store.OrderRepository, logger *logger.Logger) OrderService {
+	return &orderService{
+		orderRepository: orderRepository,
+		logger:          logger,
+	}
+}
+
+func (o *orderService) AddOrder(ctx context.Context, userId int64, orderNumber string) error {
+	isCorrect, err := utils.LunaCheckString(orderNumber)
+	switch {
+	case err != nil:
+		return fmt.Errorf("%w: %w", ErrInvalidOrderNumber, err)
+	case !isCorrect:
+		return ErrNotCorrectOrderNumber
+	}
+
+	order, err := o.orderRepository.CreateOrderOrGetExisting(ctx, userId, orderNumber)
+	if err != nil {
+		switch {
+		case order.UserId != userId:
+			return ErrOrderWasUploadedByAnotherUser
+		case order.UserId == userId:
+			return ErrOrderWasUploadedByCurrentUser
+		default:
+			return fmt.Errorf("error occured during creation of new order: %w", err)
+		}
+	}
+
+	return nil
+}

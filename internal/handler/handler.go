@@ -8,6 +8,7 @@ import (
 type Handler struct {
 	authService    service.AuthService
 	balanceService service.BalanceService
+	orderService   service.OrderService
 
 	logger *logger.Logger
 }
@@ -17,6 +18,7 @@ func NewHandler(services *service.Services, logger *logger.Logger) Handler {
 	return Handler{
 		authService:    services.AuthService,
 		balanceService: services.BalanceService,
+		orderService:   services.OrderService,
 		logger:         logger,
 	}
 }

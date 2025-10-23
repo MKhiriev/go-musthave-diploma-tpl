@@ -6,6 +6,7 @@ import (
 	"go-musthave-diploma-tpl/internal/logger"
 	"go-musthave-diploma-tpl/internal/store"
 	"go-musthave-diploma-tpl/internal/utils"
+	"go-musthave-diploma-tpl/models"
 )
 
 type orderService struct {
@@ -40,4 +41,16 @@ func (o *orderService) AddOrder(ctx context.Context, userId int64, orderNumber s
 	}
 
 	return nil
+}
+
+func (o *orderService) GetUserOrders(ctx context.Context, userId int64) ([]models.Order, error) {
+	orders, err := o.orderRepository.GetOrdersByUserId(ctx, userId)
+	if err != nil {
+		return nil, fmt.Errorf("error occurred during getting order: %w", err)
+	}
+	if len(orders) == 0 {
+		return nil, ErrNoUserOrdersFound
+	}
+
+	return orders, nil
 }

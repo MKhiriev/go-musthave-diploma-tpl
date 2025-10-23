@@ -58,7 +58,7 @@ func (h *Handler) logging(handler http.Handler) http.Handler {
 			Int("status", lw.responseData.status).
 			Dur("duration", duration).
 			Int("size", lw.responseData.size).
-			Send()
+			Msg("response")
 	}
 
 	return http.HandlerFunc(logFn)

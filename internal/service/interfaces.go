@@ -18,4 +18,5 @@ type BalanceService interface {
 
 type OrderService interface {
 	AddOrder(ctx context.Context, userId int64, orderNumber string) error
+	GetUserOrders(ctx context.Context, userId int64) ([]models.Order, error)
 }

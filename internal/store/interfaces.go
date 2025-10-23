@@ -16,4 +16,5 @@ type BalanceRepository interface {
 
 type OrderRepository interface {
 	CreateOrderOrGetExisting(ctx context.Context, userId int64, orderNumber string) (models.Order, error)
+	GetOrdersByUserId(ctx context.Context, userId int64) ([]models.Order, error)
 }

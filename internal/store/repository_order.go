@@ -37,3 +37,14 @@ func (o *orderRepository) CreateOrderOrGetExisting(ctx context.Context, userId i
 
 	return order, nil
 }
+
+func (o *orderRepository) GetOrdersByUserId(ctx context.Context, userId int64) ([]models.Order, error) {
+	var orders []models.Order
+
+	err := o.db.WithContext(ctx).Where("user_id = ?", userId).Find(&orders).Error
+	if err != nil {
+		return nil, fmt.Errorf("DB error: %w", err)
+	}
+
+	return orders, nil
+}

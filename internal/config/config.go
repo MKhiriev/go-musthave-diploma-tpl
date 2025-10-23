@@ -10,7 +10,7 @@ type Auth struct {
 	PasswordHashKey string
 	TokenSignKey    string
 	TokenIssuer     string
-	TokenDuration   int64
+	TokenDuration   time.Duration
 }
 
 type Server struct {
@@ -18,17 +18,21 @@ type Server struct {
 	RequestTimeout time.Duration
 }
 
-type Config struct {
+type StructuredConfig struct {
 	Auth   Auth
 	DB     DBConfig
 	Server Server
 }
 
-// TODO add env and cmd params
-func GetConfigs() *Config {
-	return &Config{
-		Auth:   Auth{PasswordHashKey: "hash", TokenSignKey: "token", TokenIssuer: "gophermart", TokenDuration: 2},
-		Server: Server{ServerAddress: "localhost:8080", RequestTimeout: time.Duration(10) * time.Second},
-		DB:     DBConfig{DSN: "postgres://postgres:postgrespassword@localhost:5432/praktikum?sslmode=disable"},
+func GetStructuredConfig() (*StructuredConfig, error) {
+	cfg, err := GetConfigs()
+	if err != nil {
+		return nil, err
 	}
+
+	return &StructuredConfig{
+		Auth:   Auth{PasswordHashKey: cfg.HashKey, TokenSignKey: cfg.TokenSignKey, TokenIssuer: cfg.TokenIssuer, TokenDuration: time.Duration(cfg.TokenDuration) * time.Hour},
+		Server: Server{ServerAddress: cfg.ServerAddress, RequestTimeout: time.Duration(cfg.RequestTimeout) * time.Second},
+		DB:     DBConfig{DSN: cfg.DatabaseDSN},
+	}, nil
 }

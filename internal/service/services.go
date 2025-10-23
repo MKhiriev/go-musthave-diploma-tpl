@@ -11,10 +11,10 @@ type Services struct {
 	BalanceService
 }
 
-func NewServices(database *store.Database, cfg *config.Config, logger *logger.Logger) *Services {
+func NewServices(database *store.Database, cfg *config.Auth, logger *logger.Logger) *Services {
 	defer logger.Info().Msg("services are initialized")
 	return &Services{
-		AuthService:    NewAuthService(database.UserRepository, &cfg.Auth, logger),
+		AuthService:    NewAuthService(database.UserRepository, cfg, logger),
 		BalanceService: NewBalanceService(database.BalanceRepository, logger),
 	}
 }

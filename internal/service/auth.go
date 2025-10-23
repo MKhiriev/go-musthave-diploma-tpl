@@ -27,7 +27,7 @@ func NewAuthService(userRepository store.UserRepository, cfg *config.Auth, logge
 		hashKey:        cfg.PasswordHashKey,
 		tokenSignKey:   cfg.TokenSignKey,
 		tokenIssuer:    cfg.TokenIssuer,
-		tokenDuration:  time.Duration(cfg.TokenDuration) * time.Hour,
+		tokenDuration:  cfg.TokenDuration,
 		logger:         logger,
 	}
 }

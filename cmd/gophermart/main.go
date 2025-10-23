@@ -11,7 +11,11 @@ import (
 
 func main() {
 	log := logger.NewLogger("gophermart-server")
-	cfg := config.GetConfigs()
+	cfg, err := config.GetStructuredConfig()
+	if err != nil {
+		log.Err(err).Any("configs", cfg).Msg("invalid configs provided!")
+		return
+	}
 	log.Info().Any("configs", cfg).Msg("program started")
 
 	conn, err := store.NewPostgresConnection(&cfg.DB, log)
@@ -26,7 +30,7 @@ func main() {
 		return
 	}
 
-	services := service.NewServices(db, cfg, log)
+	services := service.NewServices(db, &cfg.Auth, log)
 
 	myHandler := handler.NewHandler(services, log)
 	srv := new(server.Server)

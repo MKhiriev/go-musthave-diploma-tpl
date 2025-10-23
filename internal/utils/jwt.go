@@ -11,7 +11,7 @@ import (
 )
 
 func GenerateJWTToken(issuer string, userId int64, tokenDuration time.Duration, signKey string) (models.Token, error) {
-	if issuer == "" || userId == 0 || tokenDuration == 0 || signKey == "" {
+	if issuer == "" || tokenDuration == 0 || signKey == "" {
 		return models.Token{}, errors.New("invalid params for generating JWT Token")
 	}
 

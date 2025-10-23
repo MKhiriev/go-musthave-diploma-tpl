@@ -30,15 +30,13 @@ func (o *orderService) AddOrder(ctx context.Context, userId int64, orderNumber s
 	}
 
 	order, err := o.orderRepository.CreateOrderOrGetExisting(ctx, userId, orderNumber)
-	if err != nil {
-		switch {
-		case order.UserId != userId:
-			return ErrOrderWasUploadedByAnotherUser
-		case order.UserId == userId:
-			return ErrOrderWasUploadedByCurrentUser
-		default:
-			return fmt.Errorf("error occured during creation of new order: %w", err)
-		}
+	switch {
+	case order.UserId != userId:
+		return ErrOrderWasUploadedByAnotherUser
+	case order.UserId == userId:
+		return ErrOrderWasUploadedByCurrentUser
+	case err != nil:
+		return fmt.Errorf("error occured during creation of new order: %w", err)
 	}
 
 	return nil

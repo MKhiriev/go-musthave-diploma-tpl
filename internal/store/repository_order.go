@@ -41,7 +41,11 @@ func (o *orderRepository) CreateOrderOrGetExisting(ctx context.Context, userId i
 func (o *orderRepository) GetOrdersByUserId(ctx context.Context, userId int64) ([]models.Order, error) {
 	var orders []models.Order
 
-	err := o.db.WithContext(ctx).Where("user_id = ?", userId).Find(&orders).Error
+	err := o.db.WithContext(ctx).
+		Select("number, s.name as status, accrual, uploaded_at").
+		Joins("LEFT JOIN statuses s ON orders.status_id = s.status_id").
+		Where("user_id = ?", userId).
+		Find(&orders).Error
 	if err != nil {
 		return nil, fmt.Errorf("DB error: %w", err)
 	}

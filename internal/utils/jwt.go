@@ -50,7 +50,7 @@ func ValidateAndParseJWTToken(tokenString, tokenSignKey, tokenIssuer string) (mo
 
 	userId, err := strconv.ParseInt(userIdStr, 10, 64)
 	if err != nil {
-		return models.Token{}, fmt.Errorf("error occurred during converting subject to UserId: %w", err)
+		return models.Token{}, fmt.Errorf("error occurred during converting subject to UserIdCtxKey: %w", err)
 	}
 
 	return models.Token{Token: token, UserId: userId}, err

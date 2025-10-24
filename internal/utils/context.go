@@ -10,9 +10,9 @@ func (c contextKey) String() string {
 	return string(c)
 }
 
-var UserId = contextKey("userId")
+var UserIdCtxKey = contextKey("userId")
 
 func GetUserIdFromContext(ctx context.Context) (int64, bool) {
-	userId, ok := ctx.Value(UserId).(int64)
+	userId, ok := ctx.Value(UserIdCtxKey).(int64)
 	return userId, ok
 }

@@ -15,6 +15,7 @@ var (
 
 	ErrWithdrawalSumIsZero = errors.New("withdrawal sum is zero")
 	ErrInsufficientFunds   = errors.New("insufficient funds in the account")
+	ErrNoWithdrawalsFound  = errors.New("no withdrawals found")
 
 	ErrTokenIsExpired = errors.New("token is expired")
 )

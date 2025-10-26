@@ -47,5 +47,36 @@ func (h *Handler) withdraw(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getWithdrawals(w http.ResponseWriter, r *http.Request) {
-	// TODO: implement me!
+	ctx := r.Context()
+	userId, ok := utils.GetUserIdFromContext(ctx)
+	if !ok {
+		h.logger.Error().Msg("no user id was found in context")
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	withdrawals, err := h.withdrawalService.GetWithdrawals(ctx, userId)
+	if err != nil {
+		switch {
+		case errors.Is(err, service.ErrNoWithdrawalsFound):
+			h.logger.Err(err).Msg("no withdrawals found")
+			http.Error(w, http.StatusText(http.StatusNoContent), http.StatusNoContent)
+			return
+		default:
+			h.logger.Err(err).Msg("unexpected error occurred")
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	withdrawalsJSON, err := json.Marshal(&withdrawals)
+	if err != nil {
+		h.logger.Error().Msg("error marshalling JSON")
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(withdrawalsJSON)
 }

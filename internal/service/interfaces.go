@@ -23,4 +23,5 @@ type OrderService interface {
 
 type WithdrawalService interface {
 	Withdraw(ctx context.Context, withdrawal models.Withdrawal, userId int64) error
+	GetWithdrawals(ctx context.Context, userId int64) ([]models.Withdrawal, error)
 }

@@ -10,6 +10,6 @@ var (
 	ErrBalanceAlreadyExists = errors.New("balance for user already exists")
 	ErrNoBalanceFound       = errors.New("user balance not found")
 
-	ErrWithdrawalForExistingOrder = errors.New("withdrawal was already created for existing order")
-	ErrWithdrawalNotCreated       = errors.New("withdrawal was not created")
+	ErrWithdrawalForOrderAlreadyExists = errors.New("withdrawal was already created for existing order")
+	ErrWithdrawalWasNotCreated         = errors.New("withdrawal was not created")
 )

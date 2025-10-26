@@ -38,9 +38,9 @@ func (w *withdrawalService) Withdraw(ctx context.Context, withdrawal models.With
 	err = w.withdrawalRepository.CreateWithdrawal(ctx, withdrawal, userId)
 	if err != nil {
 		switch {
-		case errors.Is(err, store.ErrWithdrawalNotCreated):
+		case errors.Is(err, store.ErrWithdrawalWasNotCreated):
 			return ErrInsufficientFunds
-		//case errors.Is(err, store.ErrWithdrawalForExistingOrder):
+		//case errors.Is(err, store.ErrWithdrawalForOrderAlreadyExists):
 		//	return ErrNotCorrectOrderNumber
 		default:
 			return fmt.Errorf("error during withdrawal: %w", err)
@@ -49,4 +49,16 @@ func (w *withdrawalService) Withdraw(ctx context.Context, withdrawal models.With
 	}
 
 	return nil
+}
+
+func (w *withdrawalService) GetWithdrawals(ctx context.Context, userId int64) ([]models.Withdrawal, error) {
+	withdrawals, err := w.withdrawalRepository.GetWithdrawalsByUserId(ctx, userId)
+	if err != nil {
+		return nil, fmt.Errorf("error occurred during getting order: %w", err)
+	}
+	if len(withdrawals) == 0 {
+		return nil, ErrNoWithdrawalsFound
+	}
+
+	return withdrawals, nil
 }

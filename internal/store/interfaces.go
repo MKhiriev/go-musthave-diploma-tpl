@@ -21,6 +21,7 @@ type OrderRepository interface {
 
 type WithdrawalRepository interface {
 	CreateWithdrawal(ctx context.Context, withdrawal models.Withdrawal, userId int64) error
+	GetWithdrawalsByUserId(ctx context.Context, userId int64) ([]models.Withdrawal, error)
 }
 
 type UserBalanceRepository interface {

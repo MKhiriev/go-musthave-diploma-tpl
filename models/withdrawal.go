@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Withdrawal struct {
-	OrderNum    string    `gorm:"column:order" json:"order"`
+	OrderNum    string    `gorm:"column:order_num" json:"order"`
 	Sum         float64   `gorm:"column:sum" json:"sum"`
 	ProcessedAt time.Time `gorm:"column:processed_at" json:"processed_at"`
 

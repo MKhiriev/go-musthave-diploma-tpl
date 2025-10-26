@@ -15,6 +15,7 @@ type orderRepository struct {
 }
 
 func NewOrderRepository(db *gorm.DB, logger *logger.Logger) OrderRepository {
+	logger.Debug().Msg("OrderRepository created")
 	return &orderRepository{
 		db:     db,
 		logger: logger,

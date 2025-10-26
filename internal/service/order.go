@@ -25,7 +25,7 @@ func (o *orderService) AddOrder(ctx context.Context, userId int64, orderNumber s
 	isCorrect, err := utils.LunaCheckString(orderNumber)
 	switch {
 	case err != nil:
-		return fmt.Errorf("%w: %w", ErrInvalidOrderNumber, err)
+		return fmt.Errorf("error in order number: %w", ErrInvalidOrderNumber)
 	case !isCorrect:
 		return ErrNotCorrectOrderNumber
 	}

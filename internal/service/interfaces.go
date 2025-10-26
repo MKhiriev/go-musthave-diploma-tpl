@@ -20,3 +20,7 @@ type OrderService interface {
 	AddOrder(ctx context.Context, userId int64, orderNumber string) error
 	GetUserOrders(ctx context.Context, userId int64) ([]models.Order, error)
 }
+
+type WithdrawalService interface {
+	Withdraw(ctx context.Context, withdrawal models.Withdrawal, userId int64) error
+}

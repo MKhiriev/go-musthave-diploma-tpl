@@ -18,7 +18,7 @@ type DBUserBalanceRepository struct {
 }
 
 func NewUserBalanceRepository(db *gorm.DB, logger *logger.Logger) UserBalanceRepository {
-	logger.Info().Msg("DBUserBalanceRepository created")
+	logger.Debug().Msg("UserBalanceRepository created")
 	return &DBUserBalanceRepository{
 		db:     db,
 		logger: logger,

@@ -17,4 +17,29 @@ const (
 		WHERE number = @number 
 		AND NOT EXISTS (SELECT 1 FROM ins);
 	`
+	withdrawSumWithBalanceCheck = `
+		WITH updated_balance AS (
+			UPDATE balance b
+				SET
+					current = b.current - @sum,
+					withdrawn = b.withdrawn + @sum
+				WHERE b.user_id = @user_id
+					AND
+					  b.current >= @sum
+						  AND
+					 NOT EXISTS (SELECT 1 FROM orders WHERE number = @order)
+				RETURNING *
+		),
+			 inserted_withdrawal AS (
+				 INSERT INTO withdrawals (user_id, order_num, sum)
+					 SELECT
+						 @user_id,
+						 @order,
+						 @sum
+					 FROM orders o
+					 WHERE EXISTS (SELECT 1 FROM updated_balance)
+					 RETURNING *
+			 )
+		SELECT * FROM inserted_withdrawal;
+`
 )

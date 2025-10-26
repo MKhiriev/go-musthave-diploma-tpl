@@ -29,7 +29,7 @@ func (h *Handler) order(w http.ResponseWriter, r *http.Request) {
 	err = h.orderService.AddOrder(ctx, userId, orderNumber)
 	if err != nil {
 		switch {
-		case errors.Is(err, service.ErrInvalidOrderNumber):
+		case errors.Is(err, service.ErrInvalidOrderNumber) || errors.Is(err, service.ErrEmptyOrderNumber):
 			h.logger.Err(err).Msg("order number is invalid")
 			http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 			return

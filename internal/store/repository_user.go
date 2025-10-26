@@ -18,7 +18,7 @@ type DBUserRepository struct {
 }
 
 func NewUserRepository(db *gorm.DB, logger *logger.Logger) UserRepository {
-	logger.Info().Msg("DBUserRepository created")
+	logger.Debug().Msg("UserRepository created")
 	return &DBUserRepository{
 		db:     db,
 		logger: logger,

@@ -2,7 +2,6 @@ package utils
 
 import (
 	"errors"
-	"fmt"
 	"regexp"
 	"strconv"
 )
@@ -20,7 +19,7 @@ func LunaCheckString(data string) (bool, error) {
 	case err != nil:
 		return false, err
 	case !match:
-		return false, fmt.Errorf("строка '%s' содержит недопустимые символы", data)
+		return false, nil
 	}
 
 	digits := convertStringToSliceOfIntegers(data)

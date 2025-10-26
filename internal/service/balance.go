@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"go-musthave-diploma-tpl/internal/logger"
 	"go-musthave-diploma-tpl/internal/store"
 	"go-musthave-diploma-tpl/models"
@@ -20,6 +21,10 @@ func NewBalanceService(balanceRepository store.BalanceRepository, logger *logger
 }
 
 func (b *balanceService) GetBalanceByUserId(ctx context.Context, userId int64) (models.Balance, error) {
-	//TODO implement me
-	panic("implement me")
+	balance, err := b.balanceRepository.FindBalanceByUserId(ctx, userId)
+	if err != nil {
+		return models.Balance{}, fmt.Errorf("error occurred during getting user balance: %w", err)
+	}
+
+	return balance, nil
 }

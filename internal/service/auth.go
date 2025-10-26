@@ -12,23 +12,25 @@ import (
 )
 
 type authService struct {
-	userRepository store.UserRepository
-	hashKey        string
-	tokenSignKey   string
-	tokenIssuer    string
-	tokenDuration  time.Duration
+	userRepository        store.UserRepository
+	userBalanceRepository store.UserBalanceRepository
+	hashKey               string
+	tokenSignKey          string
+	tokenIssuer           string
+	tokenDuration         time.Duration
 
 	logger *logger.Logger
 }
 
-func NewAuthService(userRepository store.UserRepository, cfg *config.Auth, logger *logger.Logger) AuthService {
+func NewAuthService(userRepository store.UserRepository, userBalanceRepository store.UserBalanceRepository, cfg *config.Auth, logger *logger.Logger) AuthService {
 	return &authService{
-		userRepository: userRepository,
-		hashKey:        cfg.PasswordHashKey,
-		tokenSignKey:   cfg.TokenSignKey,
-		tokenIssuer:    cfg.TokenIssuer,
-		tokenDuration:  cfg.TokenDuration,
-		logger:         logger,
+		userRepository:        userRepository,
+		userBalanceRepository: userBalanceRepository,
+		hashKey:               cfg.PasswordHashKey,
+		tokenSignKey:          cfg.TokenSignKey,
+		tokenIssuer:           cfg.TokenIssuer,
+		tokenDuration:         cfg.TokenDuration,
+		logger:                logger,
 	}
 }
 
@@ -39,7 +41,7 @@ func (a *authService) RegisterUser(ctx context.Context, user models.User) error 
 	}
 
 	a.hashPassword(&user)
-	err := a.userRepository.CreateUser(ctx, user)
+	err := a.userBalanceRepository.CreateUserAndBalance(ctx, user)
 
 	if err != nil {
 		a.logger.Err(err).Any("user", user).Msg("user creation ended with error")
@@ -66,7 +68,7 @@ func (a *authService) Login(ctx context.Context, user models.User) (models.User,
 		a.logger.Err(err).
 			Int64("id", foundUser.UserId).
 			Str("login", foundUser.Login).
-			Str("input", user.Password).
+			Str("typed password", user.Password).
 			Str("actual password", foundUser.Password).
 			Msg("wrong password")
 		return models.User{}, ErrWrongPassword

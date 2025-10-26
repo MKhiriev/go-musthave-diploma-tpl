@@ -7,5 +7,6 @@ var (
 	ErrNoUserWasFound     = errors.New("no user was found")
 	ErrUserNotFound       = errors.New("user not found")
 
-	ErrNoBalanceFound = errors.New("user balance not found")
+	ErrBalanceAlreadyExists = errors.New("balance for user already exists")
+	ErrNoBalanceFound       = errors.New("user balance not found")
 )

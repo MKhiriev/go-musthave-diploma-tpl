@@ -18,3 +18,7 @@ type OrderRepository interface {
 	CreateOrderOrGetExisting(ctx context.Context, userId int64, orderNumber string) (models.Order, error)
 	GetOrdersByUserId(ctx context.Context, userId int64) ([]models.Order, error)
 }
+
+type UserBalanceRepository interface {
+	CreateUserAndBalance(ctx context.Context, user models.User) error
+}

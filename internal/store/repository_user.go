@@ -17,7 +17,7 @@ type DBUserRepository struct {
 	db     *gorm.DB
 }
 
-func NewDBUserRepository(db *gorm.DB, logger *logger.Logger) UserRepository {
+func NewUserRepository(db *gorm.DB, logger *logger.Logger) UserRepository {
 	logger.Info().Msg("DBUserRepository created")
 	return &DBUserRepository{
 		db:     db,

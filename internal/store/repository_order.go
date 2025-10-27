@@ -26,9 +26,8 @@ func NewOrderRepository(db *gorm.DB, logger *logger.Logger) OrderRepository {
 }
 
 func (o *orderRepository) CreateOrderOrGetExisting(ctx context.Context, userId int64, orderNumber string) (models.Order, error) {
-	var order models.Order
-
-	err := o.db.Raw(createNewOrderOrReturnExisting, map[string]interface{}{
+	var order OrderWithFlag
+	err := o.db.WithContext(ctx).Raw(createNewOrderOrReturnExisting, map[string]interface{}{
 		"number":      orderNumber,
 		"status_name": models.NEW,
 		"user_id":     userId,
@@ -38,8 +37,11 @@ func (o *orderRepository) CreateOrderOrGetExisting(ctx context.Context, userId i
 	if err != nil {
 		return models.Order{}, fmt.Errorf("DB error: %w", err)
 	}
+	if !order.IsNew {
+		return order.Order, ErrOrderWasNotCreated
+	}
 
-	return order, nil
+	return order.Order, nil
 }
 
 func (o *orderRepository) GetOrdersByUserId(ctx context.Context, userId int64) ([]models.Order, error) {

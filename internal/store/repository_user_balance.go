@@ -39,8 +39,6 @@ func (r *userBalanceRepository) CreateUserAndBalance(ctx context.Context, user m
 			}
 		}
 
-		r.logger.Debug().Int64("USER ID", user.UserId).Send()
-
 		err = tx.Create(&models.Balance{
 			UserId: user.UserId,
 		}).Error

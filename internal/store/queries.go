@@ -1,5 +1,7 @@
 package store
 
+import "go-musthave-diploma-tpl/models"
+
 const (
 	createNewOrderOrReturnExisting = `
 		WITH s AS (
@@ -9,11 +11,12 @@ const (
 			INSERT INTO orders (number, status_id, user_id, accrual)
 			SELECT @number, s.status_id, @user_id, @accrual FROM s
 			ON CONFLICT (number) DO NOTHING
-			RETURNING *
+			RETURNING *, TRUE AS is_new
 		)
 		SELECT * FROM ins
 		UNION ALL
-		SELECT * FROM orders 
+		SELECT *, FALSE AS is_new
+		FROM orders 
 		WHERE number = @number 
 		AND NOT EXISTS (SELECT 1 FROM ins);
 	`
@@ -43,3 +46,8 @@ const (
 		SELECT * FROM inserted_withdrawal;
 `
 )
+
+type OrderWithFlag struct {
+	models.Order
+	IsNew bool `gorm:"column:is_new"`
+}

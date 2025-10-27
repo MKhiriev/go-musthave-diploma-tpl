@@ -2,9 +2,9 @@ package models
 
 const (
 	NEW        = "NEW"
-	Processing = "PROCESSING"
-	Invalid    = "INVALID"
-	Processed  = "PROCESSED"
+	PROCESSING = "PROCESSING"
+	INVALID    = "INVALID"
+	PROCESSED  = "PROCESSED"
 )
 
 type Status struct {

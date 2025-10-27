@@ -7,6 +7,7 @@ import (
 
 type RFC3339Time time.Time
 
+//goland:noinspection GoMixedReceiverTypes
 func (t RFC3339Time) MarshalJSON() ([]byte, error) {
 	stamp := time.Time(t).Format(time.RFC3339)
 	return json.Marshal(stamp)

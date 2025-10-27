@@ -12,20 +12,20 @@ import (
 	"gorm.io/gorm"
 )
 
-type DBUserBalanceRepository struct {
+type userBalanceRepository struct {
 	logger *logger.Logger
 	db     *gorm.DB
 }
 
 func NewUserBalanceRepository(db *gorm.DB, logger *logger.Logger) UserBalanceRepository {
 	logger.Debug().Msg("UserBalanceRepository created")
-	return &DBUserBalanceRepository{
+	return &userBalanceRepository{
 		db:     db,
 		logger: logger,
 	}
 }
 
-func (r *DBUserBalanceRepository) CreateUserAndBalance(ctx context.Context, user models.User) error {
+func (r *userBalanceRepository) CreateUserAndBalance(ctx context.Context, user models.User) error {
 	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		err := tx.Create(&user).Error
 		var pgErr *pgconn.PgError

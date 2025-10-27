@@ -68,11 +68,11 @@ func (h *Handler) getOrders(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrNoUserOrdersFound):
-			h.logger.Error().Msg("no data")
+			h.logger.Err(err).Msg("no data")
 			http.Error(w, http.StatusText(http.StatusNoContent), http.StatusNoContent)
 			return
 		default:
-			h.logger.Error().Msg("unexpected error occurred")
+			h.logger.Err(err).Msg("unexpected error occurred")
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
@@ -80,7 +80,7 @@ func (h *Handler) getOrders(w http.ResponseWriter, r *http.Request) {
 
 	ordersJSON, err := json.Marshal(&orders)
 	if err != nil {
-		h.logger.Error().Msg("error marshalling JSON")
+		h.logger.Err(err).Msg("error marshalling JSON")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}

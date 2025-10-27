@@ -12,20 +12,20 @@ import (
 	"gorm.io/gorm"
 )
 
-type DBUserRepository struct {
+type userRepository struct {
 	logger *logger.Logger
 	db     *gorm.DB
 }
 
 func NewUserRepository(db *gorm.DB, logger *logger.Logger) UserRepository {
 	logger.Debug().Msg("UserRepository created")
-	return &DBUserRepository{
+	return &userRepository{
 		db:     db,
 		logger: logger,
 	}
 }
 
-func (r *DBUserRepository) CreateUser(ctx context.Context, user models.User) error {
+func (r *userRepository) CreateUser(ctx context.Context, user models.User) error {
 	err := r.db.WithContext(ctx).Create(&user).Error
 
 	var pgErr *pgconn.PgError
@@ -42,7 +42,7 @@ func (r *DBUserRepository) CreateUser(ctx context.Context, user models.User) err
 	return err
 }
 
-func (r *DBUserRepository) FindUserByLogin(ctx context.Context, user models.User) (models.User, error) {
+func (r *userRepository) FindUserByLogin(ctx context.Context, user models.User) (models.User, error) {
 	var foundUser models.User
 	err := r.db.WithContext(ctx).Find(&foundUser, "login", user.Login).Error
 

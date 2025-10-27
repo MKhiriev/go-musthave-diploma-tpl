@@ -71,7 +71,7 @@ func (h *Handler) getWithdrawals(w http.ResponseWriter, r *http.Request) {
 
 	withdrawalsJSON, err := json.Marshal(&withdrawals)
 	if err != nil {
-		h.logger.Error().Msg("error marshalling JSON")
+		h.logger.Err(err).Msg("error marshalling JSON")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}

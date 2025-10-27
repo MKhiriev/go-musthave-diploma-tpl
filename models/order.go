@@ -6,7 +6,7 @@ type Order struct {
 	Accrual    float64     `gorm:"column:accrual" json:"accrual,omitempty"`
 	UploadedAt RFC3339Time `gorm:"column:uploaded_at" json:"uploaded_at"`
 
-	OrderId  int64 `gorm:"column:order_id" json:"-"`
+	OrderId  int64 `gorm:"column:order_id;primarykey" json:"-"`
 	StatusId int64 `gorm:"column:status_id" json:"-"`
 	UserId   int64 `gorm:"column:user_id" json:"-"`
 }

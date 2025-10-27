@@ -8,7 +8,7 @@ const (
 )
 
 type Status struct {
-	StatusId int64  `gorm:"column:status_id"`
+	StatusId int64  `gorm:"column:status_id;primarykey"`
 	Name     string `gorm:"column:name"`
 }
 

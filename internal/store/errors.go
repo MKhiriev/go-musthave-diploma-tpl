@@ -12,4 +12,6 @@ var (
 
 	ErrWithdrawalForOrderAlreadyExists = errors.New("withdrawal was already created for existing order")
 	ErrWithdrawalWasNotCreated         = errors.New("withdrawal was not created")
+
+	ErrOrderNotFound = errors.New("order not found")
 )

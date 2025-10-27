@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"go-musthave-diploma-tpl/internal/service"
 	"go-musthave-diploma-tpl/internal/store"
 	"go-musthave-diploma-tpl/models"
@@ -19,8 +20,7 @@ func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.authService.RegisterUser(ctx, user)
-
+	registeredUser, err := h.authService.RegisterUser(ctx, user)
 	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrInvalidDataProvided):
@@ -38,6 +38,14 @@ func (h *Handler) register(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
+	token, err := h.authService.CreateToken(ctx, registeredUser)
+	if err != nil {
+		h.logger.Err(err).Msg("creation of token failed")
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Authorization", fmt.Sprintf("Bearer %s", token.SignedString))
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -79,6 +87,6 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	w.Header().Set("Authorization", fmt.Sprintf("Bearer %s", token.SignedString))
 	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write([]byte(token.SignedString))
 }

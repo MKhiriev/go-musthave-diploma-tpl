@@ -7,6 +7,9 @@ import (
 	"go-musthave-diploma-tpl/internal/utils"
 	"io"
 	"net/http"
+	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func (h *Handler) order(w http.ResponseWriter, r *http.Request) {
@@ -88,4 +91,45 @@ func (h *Handler) getOrders(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_, _ = w.Write(ordersJSON)
+}
+
+func (h *Handler) getOrderStatus(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	orderNumber := chi.URLParam(r, "metricName")
+
+	_, err := strconv.ParseInt(orderNumber, 10, 64)
+	if err != nil {
+		h.logger.Error().Msg("order number is not a number")
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+
+	order, err := h.orderService.GetOrder(ctx, orderNumber)
+	if err != nil {
+		switch {
+		case errors.Is(err, service.ErrOrderNotRegistered):
+			h.logger.Err(err).Msg("order isn't registered")
+			http.Error(w, http.StatusText(http.StatusNoContent), http.StatusNoContent)
+			return
+		case errors.Is(err, service.ErrTooManyRequests):
+			h.logger.Err(err).Msg("too many requests to accrual service")
+			http.Error(w, err.Error(), http.StatusTooManyRequests)
+			return
+		default:
+			h.logger.Err(err).Msg("unexpected error occurred")
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	orderJSON, err := json.Marshal(&order)
+	if err != nil {
+		h.logger.Err(err).Msg("error marshalling JSON")
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	_, _ = w.Write(orderJSON)
 }

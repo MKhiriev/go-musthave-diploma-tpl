@@ -12,6 +12,8 @@ var (
 	ErrOrderWasUploadedByCurrentUser = errors.New("order number was already uploaded by user")
 	ErrOrderWasUploadedByAnotherUser = errors.New("order number was uploaded by another user")
 	ErrNoUserOrdersFound             = errors.New("no user orders found")
+	ErrOrderNotRegistered            = errors.New("order is not registered")
+	ErrTooManyRequests               = errors.New("too many requests to accrual service")
 
 	ErrWithdrawalSumIsZero = errors.New("withdrawal sum is zero")
 	ErrInsufficientFunds   = errors.New("insufficient funds in the account")

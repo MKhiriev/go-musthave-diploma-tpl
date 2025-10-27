@@ -26,6 +26,8 @@ func (h *Handler) Init(requestTimeout time.Duration) *chi.Mux {
 		r.Get("/api/user/balance", h.getBalance)         // получение текущего баланса счёта баллов лояльности пользователя
 		r.Post("/api/user/balance/withdraw", h.withdraw) // запрос на списание баллов с накопительного счёта в счёт оплаты нового заказа
 		r.Get("/api/user/withdrawals", h.getWithdrawals) // получение информации о выводе средств с накопительного счёта пользователем
+
+		r.Get("/api/orders/{number}", h.getOrderStatus) // Взаимодействие с системой расчёта начислений баллов лояльности
 	})
 
 	router.MethodNotAllowed(CheckHTTPMethod(router))

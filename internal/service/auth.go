@@ -34,21 +34,21 @@ func NewAuthService(userRepository store.UserRepository, userBalanceRepository s
 	}
 }
 
-func (a *authService) RegisterUser(ctx context.Context, user models.User) error {
+func (a *authService) RegisterUser(ctx context.Context, user models.User) (models.User, error) {
 	if user.Login == "" || user.Password == "" {
 		a.logger.Error().Any("user", user).Msg("invalid user data provided")
-		return ErrInvalidDataProvided
+		return models.User{}, ErrInvalidDataProvided
 	}
 
 	a.hashPassword(&user)
-	err := a.userBalanceRepository.CreateUserAndBalance(ctx, user)
+	registeredUser, err := a.userBalanceRepository.CreateUserAndBalance(ctx, user)
 
 	if err != nil {
 		a.logger.Err(err).Any("user", user).Msg("user creation ended with error")
-		return fmt.Errorf("user creation ended with error: %w", err)
+		return models.User{}, fmt.Errorf("user creation ended with error: %w", err)
 	}
 
-	return nil
+	return registeredUser, nil
 }
 
 func (a *authService) Login(ctx context.Context, user models.User) (models.User, error) {

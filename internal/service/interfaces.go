@@ -6,7 +6,7 @@ import (
 )
 
 type AuthService interface {
-	RegisterUser(ctx context.Context, user models.User) error
+	RegisterUser(ctx context.Context, user models.User) (models.User, error)
 	Login(ctx context.Context, user models.User) (models.User, error)
 	CreateToken(ctx context.Context, user models.User) (models.Token, error)
 	ParseToken(ctx context.Context, tokenString string) (models.Token, error)
@@ -19,6 +19,7 @@ type BalanceService interface {
 type OrderService interface {
 	AddOrder(ctx context.Context, userId int64, orderNumber string) error
 	GetUserOrders(ctx context.Context, userId int64) ([]models.Order, error)
+	GetOrder(ctx context.Context, orderNumber string) (models.Order, error)
 }
 
 type WithdrawalService interface {

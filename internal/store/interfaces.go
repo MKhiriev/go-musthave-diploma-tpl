@@ -17,6 +17,7 @@ type BalanceRepository interface {
 type OrderRepository interface {
 	CreateOrderOrGetExisting(ctx context.Context, userId int64, orderNumber string) (models.Order, error)
 	GetOrdersByUserId(ctx context.Context, userId int64) ([]models.Order, error)
+	GetOrderByNumber(ctx context.Context, orderNumber string) (models.Order, error)
 }
 
 type WithdrawalRepository interface {
@@ -25,5 +26,5 @@ type WithdrawalRepository interface {
 }
 
 type UserBalanceRepository interface {
-	CreateUserAndBalance(ctx context.Context, user models.User) error
+	CreateUserAndBalance(ctx context.Context, user models.User) (models.User, error)
 }

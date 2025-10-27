@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-musthave-diploma-tpl/internal/logger"
 	"go-musthave-diploma-tpl/internal/store"
@@ -53,4 +54,24 @@ func (o *orderService) GetUserOrders(ctx context.Context, userId int64) ([]model
 	}
 
 	return orders, nil
+}
+
+func (o *orderService) GetOrder(ctx context.Context, orderNumber string) (models.Order, error) {
+	order, err := o.orderRepository.GetOrderByNumber(ctx, orderNumber)
+	if err != nil {
+		switch {
+		case errors.Is(err, store.ErrOrderNotFound):
+			return models.Order{}, ErrOrderNotRegistered
+		default:
+			return models.Order{}, fmt.Errorf("error occurred during getting order: %w", err)
+		}
+	}
+
+	if order.StatusText == models.PROCESSED || order.StatusText == models.INVALID {
+		return order, nil
+	}
+
+	//status, err := o.accrualAdapter.GetOrderAccrual(ctx)
+
+	return order, nil
 }

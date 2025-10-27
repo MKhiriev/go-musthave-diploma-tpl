@@ -2,10 +2,13 @@ package store
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"go-musthave-diploma-tpl/internal/logger"
 	"go-musthave-diploma-tpl/models"
 
+	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5/pgconn"
 	"gorm.io/gorm"
 )
 
@@ -52,4 +55,24 @@ func (o *orderRepository) GetOrdersByUserId(ctx context.Context, userId int64) (
 	}
 
 	return orders, nil
+}
+
+func (o *orderRepository) GetOrderByNumber(ctx context.Context, orderNumber string) (models.Order, error) {
+	var order models.Order
+
+	err := o.db.WithContext(ctx).
+		Where("number = ?", orderNumber).
+		Find(&order).Error
+
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) {
+		switch pgErr.Code {
+		case pgerrcode.NoDataFound:
+			return models.Order{}, ErrOrderNotFound
+		default:
+			return models.Order{}, fmt.Errorf("unexpected DB error: %w", err)
+		}
+	}
+
+	return order, nil
 }

@@ -25,9 +25,9 @@ func NewUserBalanceRepository(db *gorm.DB, logger *logger.Logger) UserBalanceRep
 	}
 }
 
-func (r *userBalanceRepository) CreateUserAndBalance(ctx context.Context, user models.User) error {
+func (r *userBalanceRepository) CreateUserAndBalance(ctx context.Context, user models.User) (models.User, error) {
 	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
-		err := tx.Create(&user).Error
+		err := tx.Omit("user_id").Create(&user).Error
 		var pgErr *pgconn.PgError
 		// if postgres returns error
 		if errors.As(err, &pgErr) {
@@ -38,6 +38,8 @@ func (r *userBalanceRepository) CreateUserAndBalance(ctx context.Context, user m
 				return fmt.Errorf("unexpected DB error: %w", err)
 			}
 		}
+
+		r.logger.Debug().Int64("USER ID", user.UserId).Send()
 
 		err = tx.Create(&models.Balance{
 			UserId: user.UserId,
@@ -56,5 +58,5 @@ func (r *userBalanceRepository) CreateUserAndBalance(ctx context.Context, user m
 		return nil
 	})
 
-	return err
+	return user, err
 }

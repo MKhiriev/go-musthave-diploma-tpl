@@ -25,11 +25,16 @@ type Adapter struct {
 	AccrualRoute   string
 }
 
+type Workers struct {
+	OrderAccrualInterval time.Duration
+}
+
 type StructuredConfig struct {
 	Auth    Auth
 	DB      DBConfig
 	Server  Server
 	Adapter Adapter
+	Workers Workers
 }
 
 func GetStructuredConfig() (*StructuredConfig, error) {
@@ -43,5 +48,6 @@ func GetStructuredConfig() (*StructuredConfig, error) {
 		Server:  Server{ServerAddress: cfg.ServerAddress, RequestTimeout: time.Duration(cfg.RequestTimeout) * time.Second},
 		DB:      DBConfig{DSN: cfg.DatabaseDSN},
 		Adapter: Adapter{AccrualAddress: cfg.AccrualAddress, AccrualRoute: "api/orders"},
+		Workers: Workers{OrderAccrualInterval: time.Duration(2) * time.Second},
 	}, nil
 }

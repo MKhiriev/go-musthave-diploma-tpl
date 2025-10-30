@@ -23,13 +23,5 @@ func NewServices(database *store.Database, adapters *adapter.Adapters, cfg *conf
 		WithdrawalService: NewWithdrawalService(database.WithdrawalRepository, logger),
 	}
 
-	//services.Run()
-
 	return services
-}
-
-func (s *Services) Run() {
-	go func() {
-		_ = s.OrderService.RunAccrualUpdate()
-	}()
 }

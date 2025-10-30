@@ -27,7 +27,7 @@ func NewOrderRepository(db *gorm.DB, logger *logger.Logger) OrderRepository {
 
 func (o *orderRepository) CreateOrderOrGetExisting(ctx context.Context, userId int64, orderNumber string) (models.Order, error) {
 	var order OrderWithFlag
-	err := o.db.WithContext(ctx).Raw(createNewOrderOrReturnExisting, map[string]interface{}{
+	err := o.db.Debug().WithContext(ctx).Raw(createNewOrderOrReturnExisting, map[string]interface{}{
 		"number":      orderNumber,
 		"status_name": models.NEW,
 		"user_id":     userId,
@@ -106,7 +106,7 @@ func (o *orderRepository) UpdateOrders(ctx context.Context, orders ...models.Ord
 		BalanceUpdated int
 	}
 
-	return o.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err := o.db.Debug().WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		for _, order := range orders {
 			queryRes := result{}
 			res := tx.Raw(updateOrderAccrualAndBalance, map[string]interface{}{
@@ -126,4 +126,6 @@ func (o *orderRepository) UpdateOrders(ctx context.Context, orders ...models.Ord
 
 		return nil
 	})
+
+	return err
 }

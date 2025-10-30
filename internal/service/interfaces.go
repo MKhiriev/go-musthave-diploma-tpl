@@ -20,8 +20,8 @@ type OrderService interface {
 	AddOrder(ctx context.Context, userId int64, orderNumber string) error
 	GetUserOrders(ctx context.Context, userId int64) ([]models.Order, error)
 	GetOrder(ctx context.Context, orderNumber string) (models.Order, error)
-	GetAccruals(ctx context.Context) error
-	RunAccrualUpdate() error
+	GetOrdersForAccrual(ctx context.Context) ([]models.Order, error)
+	UpdateOrders(ctx context.Context, orders ...models.Order) error
 }
 
 type WithdrawalService interface {

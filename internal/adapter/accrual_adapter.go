@@ -7,11 +7,8 @@ import (
 	"go-musthave-diploma-tpl/internal/logger"
 	"go-musthave-diploma-tpl/internal/utils"
 	"go-musthave-diploma-tpl/models"
-	"math"
 	"net/http"
 	"net/url"
-	"regexp"
-	"strconv"
 	"time"
 )
 
@@ -52,6 +49,7 @@ func (a *accrualAdapter) GetOrderAccrual(ctx context.Context, orderNumber string
 	}
 
 	a.logger.Debug().
+		Str("route", route).
 		Int("status", response.StatusCode()).
 		Any("accrual", accrual).
 		Bytes("body", response.Body()).
@@ -63,7 +61,6 @@ func (a *accrualAdapter) GetOrderAccrual(ctx context.Context, orderNumber string
 	case http.StatusNoContent:
 		return models.Order{}, ErrOrderNotRegisteredInAccrual
 	case http.StatusTooManyRequests:
-		a.setAllowedRequestTimeout(string(response.Body()))
 		retryAfter := response.Header().Get("Retry-After")
 		return models.Order{}, fmt.Errorf("%w: %s", ErrTooManyAccrualRequestsRetryAfter, retryAfter)
 	case http.StatusOK:
@@ -71,46 +68,4 @@ func (a *accrualAdapter) GetOrderAccrual(ctx context.Context, orderNumber string
 	default:
 		return models.Order{}, ErrUndefinedAccrualStatusReturned
 	}
-}
-
-// setAllowedRequestTimeout
-//
-//   - gets string `No more than N requests per minute allowed`
-//   - calculates timeout
-func (a *accrualAdapter) setAllowedRequestTimeout(timeout string) {
-	re := regexp.MustCompile(`\d+`)
-	match := re.FindString(timeout)
-
-	if match == "" {
-		fmt.Println("Число не найдено")
-		a.requestTimeout = a.requestTimeout + time.Second
-	}
-
-	numberOfRequestsPerMinute, err := strconv.ParseFloat(match, 64)
-	if err != nil {
-		fmt.Println("Ошибка преобразования:", err)
-		a.requestTimeout = a.requestTimeout + time.Second
-	}
-
-	newTimeout := math.Round(60/numberOfRequestsPerMinute) + 1
-
-	a.requestTimeout = time.Duration(newTimeout) * time.Second
-}
-
-func (a *accrualAdapter) sleep(timeout string) {
-	re := regexp.MustCompile(`\d+`)
-	match := re.FindString(timeout)
-
-	if match == "" {
-		fmt.Println("Число не найдено")
-		a.requestTimeout = a.requestTimeout + time.Second
-	}
-
-	newTimeout, err := strconv.Atoi(match)
-	if err != nil {
-		fmt.Println("Ошибка преобразования:", err)
-		a.requestTimeout = a.requestTimeout + time.Second
-	}
-
-	a.requestTimeout = time.Duration(newTimeout) * time.Second
 }

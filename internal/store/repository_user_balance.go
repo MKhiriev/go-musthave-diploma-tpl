@@ -26,7 +26,7 @@ func NewUserBalanceRepository(db *gorm.DB, logger *logger.Logger) UserBalanceRep
 }
 
 func (r *userBalanceRepository) CreateUserAndBalance(ctx context.Context, user models.User) (models.User, error) {
-	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+	err := r.db.Debug().WithContext(ctx).Transaction(func(tx *gorm.DB) error {
 		err := tx.Omit("user_id").Create(&user).Error
 		var pgErr *pgconn.PgError
 		// if postgres returns error

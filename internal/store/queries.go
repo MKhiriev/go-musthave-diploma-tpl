@@ -39,7 +39,6 @@ const (
 						 @user_id,
 						 @order,
 						 @sum
-					 FROM orders o
 					 WHERE EXISTS (SELECT 1 FROM updated_balance)
 					 RETURNING *
 			 )

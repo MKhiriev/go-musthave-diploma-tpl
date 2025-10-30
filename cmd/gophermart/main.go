@@ -8,6 +8,7 @@ import (
 	"go-musthave-diploma-tpl/internal/server"
 	"go-musthave-diploma-tpl/internal/service"
 	"go-musthave-diploma-tpl/internal/store"
+	"go-musthave-diploma-tpl/internal/workers"
 )
 
 func main() {
@@ -34,6 +35,8 @@ func main() {
 	}
 
 	services := service.NewServices(db, adapters, &cfg.Auth, log)
+
+	workers.NewWorkers(services, adapters, &cfg.Workers, log).Run()
 
 	myHandler := handler.NewHandler(services, log)
 	srv := new(server.Server)

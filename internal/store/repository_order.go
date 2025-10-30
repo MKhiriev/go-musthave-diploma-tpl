@@ -78,3 +78,52 @@ func (o *orderRepository) GetOrderByNumber(ctx context.Context, orderNumber stri
 
 	return order, nil
 }
+
+func (o *orderRepository) GetOrdersByStatuses(ctx context.Context, statuses ...string) ([]models.Order, error) {
+	if len(statuses) == 0 {
+		return nil, ErrNoStatusesPassed
+	}
+
+	var orders []models.Order
+	err := o.db.WithContext(ctx).
+		Select("orders.*, s.name AS status").
+		Joins("JOIN statuses s ON s.status_id = orders.status_id").
+		Where("s.name IN ?", statuses).
+		Find(&orders).Error
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to get orders by statuses: %w", err)
+	}
+
+	o.logger.Debug().Any("orders", orders).Msg("FOUND ORDERS")
+
+	return orders, nil
+}
+
+func (o *orderRepository) UpdateOrders(ctx context.Context, orders ...models.Order) error {
+	type result struct {
+		OrdersUpdated  int
+		BalanceUpdated int
+	}
+
+	return o.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		for _, order := range orders {
+			queryRes := result{}
+			res := tx.Raw(updateOrderAccrualAndBalance, map[string]interface{}{
+				"status_name":  order.StatusText,
+				"accrual":      order.Accrual,
+				"order_number": order.Number,
+			}).Scan(&queryRes)
+
+			if res.Error != nil {
+				return fmt.Errorf("failed to update order %s: %w", order.Number, res.Error)
+			}
+
+			if queryRes.OrdersUpdated == 0 || queryRes.BalanceUpdated == 0 {
+				return fmt.Errorf("order %s not found", order.Number)
+			}
+		}
+
+		return nil
+	})
+}

@@ -15,4 +15,6 @@ var (
 
 	ErrOrderNotFound      = errors.New("order not found")
 	ErrOrderWasNotCreated = errors.New("order was not created")
+
+	ErrNoStatusesPassed = errors.New("no statuses were passed")
 )

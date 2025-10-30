@@ -18,6 +18,8 @@ type OrderRepository interface {
 	CreateOrderOrGetExisting(ctx context.Context, userId int64, orderNumber string) (models.Order, error)
 	GetOrdersByUserId(ctx context.Context, userId int64) ([]models.Order, error)
 	GetOrderByNumber(ctx context.Context, orderNumber string) (models.Order, error)
+	GetOrdersByStatuses(ctx context.Context, statuses ...string) ([]models.Order, error)
+	UpdateOrders(ctx context.Context, orders ...models.Order) error
 }
 
 type WithdrawalRepository interface {

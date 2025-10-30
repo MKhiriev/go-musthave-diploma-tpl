@@ -1,6 +1,8 @@
 package config
 
-import "time"
+import (
+	"time"
+)
 
 type DBConfig struct {
 	DSN string
@@ -18,10 +20,16 @@ type Server struct {
 	RequestTimeout time.Duration
 }
 
+type Adapter struct {
+	AccrualAddress string
+	AccrualRoute   string
+}
+
 type StructuredConfig struct {
-	Auth   Auth
-	DB     DBConfig
-	Server Server
+	Auth    Auth
+	DB      DBConfig
+	Server  Server
+	Adapter Adapter
 }
 
 func GetStructuredConfig() (*StructuredConfig, error) {
@@ -31,8 +39,9 @@ func GetStructuredConfig() (*StructuredConfig, error) {
 	}
 
 	return &StructuredConfig{
-		Auth:   Auth{PasswordHashKey: cfg.HashKey, TokenSignKey: cfg.TokenSignKey, TokenIssuer: cfg.TokenIssuer, TokenDuration: time.Duration(cfg.TokenDuration) * time.Hour},
-		Server: Server{ServerAddress: cfg.ServerAddress, RequestTimeout: time.Duration(cfg.RequestTimeout) * time.Second},
-		DB:     DBConfig{DSN: cfg.DatabaseDSN},
+		Auth:    Auth{PasswordHashKey: cfg.HashKey, TokenSignKey: cfg.TokenSignKey, TokenIssuer: cfg.TokenIssuer, TokenDuration: time.Duration(cfg.TokenDuration) * time.Hour},
+		Server:  Server{ServerAddress: cfg.ServerAddress, RequestTimeout: time.Duration(cfg.RequestTimeout) * time.Second},
+		DB:      DBConfig{DSN: cfg.DatabaseDSN},
+		Adapter: Adapter{AccrualAddress: cfg.AccrualAddress, AccrualRoute: "api/orders"},
 	}, nil
 }

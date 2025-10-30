@@ -14,6 +14,8 @@ var (
 	ErrNoUserOrdersFound             = errors.New("no user orders found")
 	ErrOrderNotRegistered            = errors.New("order is not registered")
 	ErrTooManyRequests               = errors.New("too many requests to accrual service")
+	ErrNoOrdersToUpdate              = errors.New("no orders to update after check")
+	ErrNoOrdersForUpdate             = errors.New("no unprocessed orders currently")
 
 	ErrWithdrawalSumIsZero = errors.New("withdrawal sum is zero")
 	ErrInsufficientFunds   = errors.New("insufficient funds in the account")

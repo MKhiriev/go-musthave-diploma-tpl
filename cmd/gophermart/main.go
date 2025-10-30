@@ -1,6 +1,7 @@
 package main
 
 import (
+	"go-musthave-diploma-tpl/internal/adapter"
 	"go-musthave-diploma-tpl/internal/config"
 	"go-musthave-diploma-tpl/internal/handler"
 	"go-musthave-diploma-tpl/internal/logger"
@@ -18,6 +19,8 @@ func main() {
 	}
 	log.Info().Any("configs", cfg).Msg("program started")
 
+	adapters := adapter.NewAdapters(&cfg.Adapter, log)
+
 	conn, err := store.NewPostgresConnection(&cfg.DB, log)
 	if err != nil {
 		log.Err(err).Msg("error during establishing connection to database")
@@ -30,7 +33,7 @@ func main() {
 		return
 	}
 
-	services := service.NewServices(db, &cfg.Auth, log)
+	services := service.NewServices(db, adapters, &cfg.Auth, log)
 
 	myHandler := handler.NewHandler(services, log)
 	srv := new(server.Server)

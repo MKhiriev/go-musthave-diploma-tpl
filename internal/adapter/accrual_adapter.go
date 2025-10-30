@@ -1,0 +1,116 @@
+package adapter
+
+import (
+	"context"
+	"fmt"
+	"go-musthave-diploma-tpl/internal/config"
+	"go-musthave-diploma-tpl/internal/logger"
+	"go-musthave-diploma-tpl/internal/utils"
+	"go-musthave-diploma-tpl/models"
+	"math"
+	"net/http"
+	"net/url"
+	"regexp"
+	"strconv"
+	"time"
+)
+
+type accrualAdapter struct {
+	accrualAddress string
+	accrualRoute   string
+	*utils.HttpClient
+
+	requestTimeout time.Duration
+	logger         *logger.Logger
+}
+
+func NewAccrualAdapter(cfg *config.Adapter, logger *logger.Logger) AccrualAdapter {
+	return &accrualAdapter{
+		accrualAddress: cfg.AccrualAddress,
+		accrualRoute:   cfg.AccrualRoute,
+		HttpClient:     utils.NewHttpClient(),
+		logger:         logger,
+	}
+}
+
+func (a *accrualAdapter) GetOrderAccrual(ctx context.Context, orderNumber string) (models.Order, error) {
+	var accrual models.Accrual
+
+	route, pathJoinError := url.JoinPath(a.accrualAddress, a.accrualRoute, orderNumber)
+	if pathJoinError != nil {
+		a.logger.Err(pathJoinError).Msg("url join error")
+		return models.Order{}, fmt.Errorf("url join error: %w", pathJoinError)
+	}
+
+	response, err := a.HttpClient.R().
+		SetDebug(false).
+		SetContext(ctx).
+		SetResult(&accrual).
+		Get(route)
+	if err != nil {
+		return models.Order{}, fmt.Errorf("commucation with accrual system error: %w", err)
+	}
+
+	a.logger.Debug().
+		Int("status", response.StatusCode()).
+		Any("accrual", accrual).
+		Bytes("body", response.Body()).
+		Msg("ADAPTER")
+
+	switch response.StatusCode() {
+	case http.StatusInternalServerError:
+		return models.Order{}, ErrAccrualInternalServerError
+	case http.StatusNoContent:
+		return models.Order{}, ErrOrderNotRegisteredInAccrual
+	case http.StatusTooManyRequests:
+		a.setAllowedRequestTimeout(string(response.Body()))
+		retryAfter := response.Header().Get("Retry-After")
+		return models.Order{}, fmt.Errorf("%w: %s", ErrTooManyAccrualRequestsRetryAfter, retryAfter)
+	case http.StatusOK:
+		return models.Order{Number: accrual.Order, Accrual: accrual.Accrual, StatusText: accrual.Status}, nil
+	default:
+		return models.Order{}, ErrUndefinedAccrualStatusReturned
+	}
+}
+
+// setAllowedRequestTimeout
+//
+//   - gets string `No more than N requests per minute allowed`
+//   - calculates timeout
+func (a *accrualAdapter) setAllowedRequestTimeout(timeout string) {
+	re := regexp.MustCompile(`\d+`)
+	match := re.FindString(timeout)
+
+	if match == "" {
+		fmt.Println("Число не найдено")
+		a.requestTimeout = a.requestTimeout + time.Second
+	}
+
+	numberOfRequestsPerMinute, err := strconv.ParseFloat(match, 64)
+	if err != nil {
+		fmt.Println("Ошибка преобразования:", err)
+		a.requestTimeout = a.requestTimeout + time.Second
+	}
+
+	newTimeout := math.Round(60/numberOfRequestsPerMinute) + 1
+
+	a.requestTimeout = time.Duration(newTimeout) * time.Second
+}
+
+func (a *accrualAdapter) sleep(timeout string) {
+	re := regexp.MustCompile(`\d+`)
+	match := re.FindString(timeout)
+
+	if match == "" {
+		fmt.Println("Число не найдено")
+		a.requestTimeout = a.requestTimeout + time.Second
+	}
+
+	newTimeout, err := strconv.Atoi(match)
+	if err != nil {
+		fmt.Println("Ошибка преобразования:", err)
+		a.requestTimeout = a.requestTimeout + time.Second
+	}
+
+	a.requestTimeout = time.Duration(newTimeout) * time.Second
+}

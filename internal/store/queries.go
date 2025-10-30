@@ -44,7 +44,29 @@ const (
 					 RETURNING *
 			 )
 		SELECT * FROM inserted_withdrawal;
-`
+	`
+	updateOrderAccrualAndBalance = `
+		WITH status_data AS (
+			SELECT status_id FROM statuses WHERE name = @status_name
+		),
+		updated_order AS (
+			UPDATE orders o
+			SET 
+				status_id = (SELECT status_id FROM status_data),
+				accrual = @accrual
+			WHERE o.number = @order_number
+			RETURNING o.user_id
+		),
+		updated_balance AS (
+			UPDATE balance b
+			SET current = current + @accrual
+			WHERE b.user_id = (SELECT user_id FROM updated_order)
+			RETURNING b.user_id
+		)
+		SELECT 
+			(SELECT COUNT(*) FROM updated_order) AS orders_updated,
+			(SELECT COUNT(*) FROM updated_balance) AS balance_updated;
+	`
 )
 
 type OrderWithFlag struct {

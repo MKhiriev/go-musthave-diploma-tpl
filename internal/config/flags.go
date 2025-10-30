@@ -16,7 +16,7 @@ const (
 	defaultPasswordHashKey = "hash"
 	defaultTokenSignKey    = "token"
 	defaultIssuer          = "gophermart"
-	defaultTokenDuration   = int64(2)
+	defaultTokenDuration   = int64(3)
 )
 
 type NetAddress struct {

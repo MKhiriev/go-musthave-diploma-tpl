@@ -12,7 +12,7 @@ const (
 	defaultServerAddress   = "localhost:8080"
 	defaultDatabaseDSN     = ""
 	defaultAccrualAddress  = ""
-	defaultRequestTimeout  = int64(10)
+	defaultRequestTimeout  = int64(20)
 	defaultPasswordHashKey = "hash"
 	defaultTokenSignKey    = "token"
 	defaultIssuer          = "gophermart"

@@ -50,7 +50,7 @@ func (o *orderAccrualWorker) generateWork(ticker *time.Ticker) chan []models.Ord
 				orders, err := o.orderService.GetOrdersForAccrual(context.Background())
 				if err != nil {
 					o.logger.Err(err).Msg("error occurred during generating work")
-					return
+					continue
 				}
 
 				jobs <- orders

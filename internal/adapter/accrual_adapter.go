@@ -9,7 +9,6 @@ import (
 	"go-musthave-diploma-tpl/models"
 	"net/http"
 	"net/url"
-	"time"
 )
 
 type accrualAdapter struct {
@@ -17,8 +16,7 @@ type accrualAdapter struct {
 	accrualRoute   string
 	*utils.HttpClient
 
-	requestTimeout time.Duration
-	logger         *logger.Logger
+	logger *logger.Logger
 }
 
 func NewAccrualAdapter(cfg *config.Adapter, logger *logger.Logger) AccrualAdapter {

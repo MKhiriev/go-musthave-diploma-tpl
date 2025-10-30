@@ -44,17 +44,14 @@ func (o *orderAccrualWorker) generateWork(ticker *time.Ticker) chan []models.Ord
 	jobs := make(chan []models.Order)
 
 	go func() {
-		for {
-			select {
-			case <-ticker.C:
-				orders, err := o.orderService.GetOrdersForAccrual(context.Background())
-				if err != nil {
-					o.logger.Err(err).Msg("error occurred during generating work")
-					continue
-				}
-
-				jobs <- orders
+		for range ticker.C {
+			orders, err := o.orderService.GetOrdersForAccrual(context.Background())
+			if err != nil {
+				o.logger.Err(err).Msg("error occurred during generating work")
+				continue
 			}
+
+			jobs <- orders
 		}
 	}()
 

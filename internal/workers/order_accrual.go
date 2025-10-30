@@ -67,7 +67,7 @@ func (o *orderAccrualWorker) worker(jobs <-chan []models.Order) {
 
 		_ = o.orderService.UpdateOrders(context.Background(), ordersBatch...)
 
-		o.logger.Debug().Msg("WORKER finished batch")
+		o.logger.Debug().Msg("WORKER finished with batch")
 	}
 }
 

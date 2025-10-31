@@ -4,7 +4,7 @@ type Balance struct {
 	Current   float64 `gorm:"column:current" json:"current"`
 	Withdrawn float64 `gorm:"column:withdrawn" json:"withdrawn,omitempty"`
 
-	BalanceId int64 `gorm:"column:balance_id;primarykey" json:"-"`
+	BalanceID int64 `gorm:"column:balance_id;primarykey" json:"-"`
 	UserID    int64 `gorm:"column:user_id" json:"-"`
 }
 

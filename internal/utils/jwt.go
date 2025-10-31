@@ -10,7 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateJWTToken(issuer string, userId int64, tokenDuration time.Duration, signKey string) (models.Token, error) {
+func GenerateJWTToken(issuer string, userID int64, tokenDuration time.Duration, signKey string) (models.Token, error) {
 	if issuer == "" || tokenDuration == 0 || signKey == "" {
 		return models.Token{}, errors.New("invalid params for generating JWT Token")
 	}
@@ -18,7 +18,7 @@ func GenerateJWTToken(issuer string, userId int64, tokenDuration time.Duration, 
 	now := time.Now()
 	claims := &jwt.RegisteredClaims{
 		Issuer:    issuer,
-		Subject:   strconv.FormatInt(userId, 10),
+		Subject:   strconv.FormatInt(userID, 10),
 		ExpiresAt: jwt.NewNumericDate(now.Add(tokenDuration)),
 		IssuedAt:  jwt.NewNumericDate(now),
 	}
@@ -40,18 +40,18 @@ func ValidateAndParseJWTToken(tokenString, tokenSignKey, tokenIssuer string) (mo
 		return models.Token{}, fmt.Errorf("error occurred validating and parsing token: %w", err)
 	}
 
-	userIdStr, err := token.Claims.GetSubject()
+	userIDStr, err := token.Claims.GetSubject()
 	if err != nil {
 		return models.Token{}, fmt.Errorf("error occurred during getting subject from token: %w", err)
 	}
-	if userIdStr == "" {
+	if userIDStr == "" {
 		return models.Token{}, errors.New("empty subject error")
 	}
 
-	userId, err := strconv.ParseInt(userIdStr, 10, 64)
+	userID, err := strconv.ParseInt(userIDStr, 10, 64)
 	if err != nil {
-		return models.Token{}, fmt.Errorf("error occurred during converting subject to UserIdCtxKey: %w", err)
+		return models.Token{}, fmt.Errorf("error occurred during converting subject to UserIDCtxKey: %w", err)
 	}
 
-	return models.Token{Token: token, UserId: userId}, err
+	return models.Token{Token: token, UserID: userID}, err
 }

@@ -26,7 +26,7 @@ func NewOrderService(orderRepository store.OrderRepository, accrualAdapter adapt
 	}
 }
 
-func (o *orderService) AddOrder(ctx context.Context, userId int64, orderNumber string) error {
+func (o *orderService) AddOrder(ctx context.Context, userID int64, orderNumber string) error {
 	isCorrect, err := utils.LunaCheckString(orderNumber)
 	switch {
 	case err != nil:
@@ -35,11 +35,11 @@ func (o *orderService) AddOrder(ctx context.Context, userId int64, orderNumber s
 		return ErrNotCorrectOrderNumber
 	}
 
-	order, err := o.orderRepository.CreateOrderOrGetExisting(ctx, userId, orderNumber)
+	order, err := o.orderRepository.CreateOrderOrGetExisting(ctx, userID, orderNumber)
 	switch {
-	case errors.Is(err, store.ErrOrderWasNotCreated) && order.UserId != userId:
+	case errors.Is(err, store.ErrOrderWasNotCreated) && order.UserID != userID:
 		return ErrOrderWasUploadedByAnotherUser
-	case errors.Is(err, store.ErrOrderWasNotCreated) && order.UserId == userId:
+	case errors.Is(err, store.ErrOrderWasNotCreated) && order.UserID == userID:
 		return ErrOrderWasUploadedByCurrentUser
 	case err != nil:
 		return fmt.Errorf("error occured during creation of new order: %w", err)
@@ -48,8 +48,8 @@ func (o *orderService) AddOrder(ctx context.Context, userId int64, orderNumber s
 	return nil
 }
 
-func (o *orderService) GetUserOrders(ctx context.Context, userId int64) ([]models.Order, error) {
-	orders, err := o.orderRepository.GetOrdersByUserId(ctx, userId)
+func (o *orderService) GetUserOrders(ctx context.Context, userID int64) ([]models.Order, error) {
+	orders, err := o.orderRepository.GetOrdersByUserID(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("error occurred during getting order: %w", err)
 	}

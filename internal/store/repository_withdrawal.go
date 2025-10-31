@@ -25,12 +25,12 @@ func NewWithdrawalRepository(db *gorm.DB, logger *logger.Logger) WithdrawalRepos
 	}
 }
 
-func (wr *withdrawalRepository) CreateWithdrawal(ctx context.Context, withdrawal models.Withdrawal, userId int64) error {
+func (wr *withdrawalRepository) CreateWithdrawal(ctx context.Context, withdrawal models.Withdrawal, userID int64) error {
 	result := wr.db.WithContext(ctx).
 		Raw(withdrawSumWithBalanceCheck, map[string]interface{}{
 			"order":   withdrawal.OrderNum,
 			"sum":     withdrawal.Sum,
-			"user_id": userId,
+			"user_id": userID,
 		}).Scan(&withdrawal)
 
 	var pgErr *pgconn.PgError
@@ -52,10 +52,10 @@ func (wr *withdrawalRepository) CreateWithdrawal(ctx context.Context, withdrawal
 	return nil
 }
 
-func (wr *withdrawalRepository) GetWithdrawalsByUserId(ctx context.Context, userId int64) ([]models.Withdrawal, error) {
+func (wr *withdrawalRepository) GetWithdrawalsByUserID(ctx context.Context, userID int64) ([]models.Withdrawal, error) {
 	var withdrawals []models.Withdrawal
 	err := wr.db.WithContext(ctx).
-		Where("user_id = ?", userId).
+		Where("user_id = ?", userID).
 		Find(&withdrawals).Error
 
 	if err != nil {

@@ -42,7 +42,7 @@ func (h *Handler) auth(next http.Handler) http.Handler {
 			}
 		}
 
-		ctx = context.WithValue(ctx, utils.UserIdCtxKey, token.UserId)
+		ctx = context.WithValue(ctx, utils.UserIDCtxKey, token.UserID)
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

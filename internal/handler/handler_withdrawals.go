@@ -11,7 +11,7 @@ import (
 
 func (h *Handler) withdraw(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	userId, ok := utils.GetUserIdFromContext(ctx)
+	userID, ok := utils.GetUserIDFromContext(ctx)
 	if !ok {
 		h.logger.Error().Msg("no user id was found in context")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -25,7 +25,7 @@ func (h *Handler) withdraw(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := h.withdrawalService.Withdraw(ctx, withdrawal, userId)
+	err := h.withdrawalService.Withdraw(ctx, withdrawal, userID)
 	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrNotCorrectOrderNumber):
@@ -48,14 +48,14 @@ func (h *Handler) withdraw(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) getWithdrawals(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	userId, ok := utils.GetUserIdFromContext(ctx)
+	userID, ok := utils.GetUserIDFromContext(ctx)
 	if !ok {
 		h.logger.Error().Msg("no user id was found in context")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
-	withdrawals, err := h.withdrawalService.GetWithdrawals(ctx, userId)
+	withdrawals, err := h.withdrawalService.GetWithdrawals(ctx, userID)
 	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrNoWithdrawalsFound):

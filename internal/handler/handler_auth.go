@@ -78,7 +78,7 @@ func (h *Handler) login(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	h.logger.Debug().Int64("id", foundUser.UserId).Any("found user", foundUser).Msg("user successfully logged in")
+	h.logger.Debug().Int64("id", foundUser.UserID).Any("found user", foundUser).Msg("user successfully logged in")
 
 	token, err := h.authService.CreateToken(ctx, foundUser)
 	if err != nil {

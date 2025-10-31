@@ -4,10 +4,10 @@ import (
 	"github.com/go-resty/resty/v2"
 )
 
-type HttpClient struct {
+type HTTPClient struct {
 	*resty.Client
 }
 
-func NewHttpClient() *HttpClient {
-	return &HttpClient{Client: resty.New()}
+func NewHTTPClient() *HTTPClient {
+	return &HTTPClient{Client: resty.New()}
 }

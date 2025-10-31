@@ -66,7 +66,7 @@ func (a *authService) Login(ctx context.Context, user models.User) (models.User,
 
 	if foundUser.Password != user.Password {
 		a.logger.Err(err).
-			Int64("id", foundUser.UserId).
+			Int64("id", foundUser.UserID).
 			Str("login", foundUser.Login).
 			Str("typed password", user.Password).
 			Str("actual password", foundUser.Password).
@@ -78,7 +78,7 @@ func (a *authService) Login(ctx context.Context, user models.User) (models.User,
 }
 
 func (a *authService) CreateToken(ctx context.Context, user models.User) (models.Token, error) {
-	token, err := utils.GenerateJWTToken(a.tokenIssuer, user.UserId, a.tokenDuration, a.tokenSignKey)
+	token, err := utils.GenerateJWTToken(a.tokenIssuer, user.UserID, a.tokenDuration, a.tokenSignKey)
 	if err != nil {
 		return models.Token{}, fmt.Errorf("error creating JWT token: %w", err)
 	}

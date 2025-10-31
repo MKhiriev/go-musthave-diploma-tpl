@@ -40,7 +40,7 @@ func (r *userBalanceRepository) CreateUserAndBalance(ctx context.Context, user m
 		}
 
 		err = tx.Create(&models.Balance{
-			UserId: user.UserId,
+			UserID: user.UserID,
 		}).Error
 		if err != nil {
 			if errors.As(err, &pgErr) {

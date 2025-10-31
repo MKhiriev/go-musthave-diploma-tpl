@@ -6,8 +6,8 @@ type Withdrawal struct {
 	ProcessedAt RFC3339Time `gorm:"column:processed_at" json:"processed_at"`
 
 	WithdrawalId int64 `gorm:"column:withdrawal_id;primarykey" json:"-"`
-	UserId       int64 `gorm:"column:user_id" json:"-"`
-	OrderId      int64 `gorm:"column:order_id" json:"-"`
+	UserID       int64 `gorm:"column:user_id" json:"-"`
+	OrderID      int64 `gorm:"column:order_id" json:"-"`
 }
 
 func (w Withdrawal) TableName() string {

@@ -10,17 +10,17 @@ import (
 
 func (h *Handler) getBalance(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	userId, ok := utils.GetUserIdFromContext(ctx)
+	userID, ok := utils.GetUserIDFromContext(ctx)
 	if !ok {
-		h.logger.Error().Msg("userId not found in context")
+		h.logger.Error().Msg("userID not found in context")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
-	balance, err := h.balanceService.GetBalanceByUserId(ctx, userId)
+	balance, err := h.balanceService.GetBalanceByUserID(ctx, userID)
 	switch {
 	case errors.Is(err, store.ErrNoBalanceFound) || errors.Is(err, store.ErrNoUserWasFound):
-		h.logger.Err(err).Any("userId", userId).Msg("unexpected error occurred when finding balance for user")
+		h.logger.Err(err).Any("userID", userID).Msg("unexpected error occurred when finding balance for user")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

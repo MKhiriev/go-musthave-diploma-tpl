@@ -22,7 +22,7 @@ func NewWithdrawalService(withdrawalRepository store.WithdrawalRepository, logge
 	}
 }
 
-func (w *withdrawalService) Withdraw(ctx context.Context, withdrawal models.Withdrawal, userId int64) error {
+func (w *withdrawalService) Withdraw(ctx context.Context, withdrawal models.Withdrawal, userID int64) error {
 	if withdrawal.Sum == 0 {
 		return fmt.Errorf("invalid data was passed: %w", ErrWithdrawalSumIsZero)
 	}
@@ -35,7 +35,7 @@ func (w *withdrawalService) Withdraw(ctx context.Context, withdrawal models.With
 		return ErrNotCorrectOrderNumber
 	}
 
-	err = w.withdrawalRepository.CreateWithdrawal(ctx, withdrawal, userId)
+	err = w.withdrawalRepository.CreateWithdrawal(ctx, withdrawal, userID)
 	if err != nil {
 		switch {
 		case errors.Is(err, store.ErrWithdrawalWasNotCreated):
@@ -51,8 +51,8 @@ func (w *withdrawalService) Withdraw(ctx context.Context, withdrawal models.With
 	return nil
 }
 
-func (w *withdrawalService) GetWithdrawals(ctx context.Context, userId int64) ([]models.Withdrawal, error) {
-	withdrawals, err := w.withdrawalRepository.GetWithdrawalsByUserId(ctx, userId)
+func (w *withdrawalService) GetWithdrawals(ctx context.Context, userID int64) ([]models.Withdrawal, error) {
+	withdrawals, err := w.withdrawalRepository.GetWithdrawalsByUserID(ctx, userID)
 	if err != nil {
 		return nil, fmt.Errorf("error occurred during getting order: %w", err)
 	}

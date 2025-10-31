@@ -25,12 +25,12 @@ func NewOrderRepository(db *gorm.DB, logger *logger.Logger) OrderRepository {
 	}
 }
 
-func (o *orderRepository) CreateOrderOrGetExisting(ctx context.Context, userId int64, orderNumber string) (models.Order, error) {
+func (o *orderRepository) CreateOrderOrGetExisting(ctx context.Context, userID int64, orderNumber string) (models.Order, error) {
 	var order OrderWithFlag
 	err := o.db.WithContext(ctx).Raw(createNewOrderOrReturnExisting, map[string]interface{}{
 		"number":      orderNumber,
 		"status_name": models.NEW,
-		"user_id":     userId,
+		"user_id":     userID,
 		"accrual":     0,
 	}).Scan(&order).Error
 
@@ -44,13 +44,13 @@ func (o *orderRepository) CreateOrderOrGetExisting(ctx context.Context, userId i
 	return order.Order, nil
 }
 
-func (o *orderRepository) GetOrdersByUserId(ctx context.Context, userId int64) ([]models.Order, error) {
+func (o *orderRepository) GetOrdersByUserID(ctx context.Context, userID int64) ([]models.Order, error) {
 	var orders []models.Order
 
 	err := o.db.WithContext(ctx).
 		Select("number, s.name as status, accrual, uploaded_at").
 		Joins("LEFT JOIN statuses s ON orders.status_id = s.status_id").
-		Where("user_id = ?", userId).
+		Where("user_id = ?", userID).
 		Find(&orders).Error
 	if err != nil {
 		return nil, fmt.Errorf("DB error: %w", err)

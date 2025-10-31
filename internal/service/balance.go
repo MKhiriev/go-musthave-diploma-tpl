@@ -20,8 +20,8 @@ func NewBalanceService(balanceRepository store.BalanceRepository, logger *logger
 	}
 }
 
-func (b *balanceService) GetBalanceByUserId(ctx context.Context, userId int64) (models.Balance, error) {
-	balance, err := b.balanceRepository.FindBalanceByUserId(ctx, userId)
+func (b *balanceService) GetBalanceByUserID(ctx context.Context, userID int64) (models.Balance, error) {
+	balance, err := b.balanceRepository.FindBalanceByUserID(ctx, userID)
 	if err != nil {
 		return models.Balance{}, fmt.Errorf("error occurred during getting user balance: %w", err)
 	}

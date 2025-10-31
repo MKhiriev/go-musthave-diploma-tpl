@@ -14,7 +14,7 @@ import (
 
 func (h *Handler) order(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	userId, ok := utils.GetUserIdFromContext(ctx)
+	userID, ok := utils.GetUserIDFromContext(ctx)
 	if !ok {
 		h.logger.Error().Msg("no user id was found in context")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -29,7 +29,7 @@ func (h *Handler) order(w http.ResponseWriter, r *http.Request) {
 	}
 
 	orderNumber := string(body)
-	err = h.orderService.AddOrder(ctx, userId, orderNumber)
+	err = h.orderService.AddOrder(ctx, userID, orderNumber)
 	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrInvalidOrderNumber) || errors.Is(err, service.ErrEmptyOrderNumber):
@@ -60,14 +60,14 @@ func (h *Handler) order(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) getOrders(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	userId, ok := utils.GetUserIdFromContext(ctx)
+	userID, ok := utils.GetUserIDFromContext(ctx)
 	if !ok {
 		h.logger.Error().Msg("no user id was found in context")
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
-	orders, err := h.orderService.GetUserOrders(ctx, userId)
+	orders, err := h.orderService.GetUserOrders(ctx, userID)
 	if err != nil {
 		switch {
 		case errors.Is(err, service.ErrNoUserOrdersFound):

@@ -13,18 +13,18 @@ type AuthService interface {
 }
 
 type BalanceService interface {
-	GetBalanceByUserId(ctx context.Context, userId int64) (models.Balance, error)
+	GetBalanceByUserID(ctx context.Context, userID int64) (models.Balance, error)
 }
 
 type OrderService interface {
-	AddOrder(ctx context.Context, userId int64, orderNumber string) error
-	GetUserOrders(ctx context.Context, userId int64) ([]models.Order, error)
+	AddOrder(ctx context.Context, userID int64, orderNumber string) error
+	GetUserOrders(ctx context.Context, userID int64) ([]models.Order, error)
 	GetOrder(ctx context.Context, orderNumber string) (models.Order, error)
 	GetOrdersForAccrual(ctx context.Context) ([]models.Order, error)
 	UpdateOrders(ctx context.Context, orders ...models.Order) error
 }
 
 type WithdrawalService interface {
-	Withdraw(ctx context.Context, withdrawal models.Withdrawal, userId int64) error
-	GetWithdrawals(ctx context.Context, userId int64) ([]models.Withdrawal, error)
+	Withdraw(ctx context.Context, withdrawal models.Withdrawal, userID int64) error
+	GetWithdrawals(ctx context.Context, userID int64) ([]models.Withdrawal, error)
 }

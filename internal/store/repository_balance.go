@@ -25,11 +25,11 @@ func NewBalanceRepository(db *gorm.DB, logger *logger.Logger) BalanceRepository 
 	}
 }
 
-func (b *balanceRepository) FindBalanceByUserId(ctx context.Context, userId int64) (models.Balance, error) {
+func (b *balanceRepository) FindBalanceByUserID(ctx context.Context, userID int64) (models.Balance, error) {
 	var balance models.Balance
 
 	err := b.db.WithContext(ctx).
-		Where("user_id = ?", userId).
+		Where("user_id = ?", userID).
 		Find(&balance).Error
 
 	var pgErr *pgconn.PgError

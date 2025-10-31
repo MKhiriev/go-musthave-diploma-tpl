@@ -14,7 +14,7 @@ import (
 type accrualAdapter struct {
 	accrualAddress string
 	accrualRoute   string
-	*utils.HttpClient
+	*utils.HTTPClient
 
 	logger *logger.Logger
 }
@@ -23,7 +23,7 @@ func NewAccrualAdapter(cfg *config.Adapter, logger *logger.Logger) AccrualAdapte
 	return &accrualAdapter{
 		accrualAddress: cfg.AccrualAddress,
 		accrualRoute:   cfg.AccrualRoute,
-		HttpClient:     utils.NewHttpClient(),
+		HTTPClient:     utils.NewHTTPClient(),
 		logger:         logger,
 	}
 }
@@ -37,7 +37,7 @@ func (a *accrualAdapter) GetOrderAccrual(ctx context.Context, orderNumber string
 		return models.Order{}, fmt.Errorf("url join error: %w", pathJoinError)
 	}
 
-	response, err := a.HttpClient.R().
+	response, err := a.HTTPClient.R().
 		SetDebug(false).
 		SetContext(ctx).
 		SetResult(&accrual).

@@ -9,7 +9,7 @@ import (
 
 func (h *Handler) Init(requestTimeout time.Duration) *chi.Mux {
 	router := chi.NewRouter()
-	router.Use(middleware.Recoverer, h.logging, withRequestTimeout(requestTimeout))
+	router.Use(middleware.Recoverer, GZip, h.logging, withRequestTimeout(requestTimeout))
 
 	// routes without authorization
 	router.Group(func(r chi.Router) {

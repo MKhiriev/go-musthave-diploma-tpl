@@ -30,3 +30,7 @@ type WithdrawalRepository interface {
 type UserBalanceRepository interface {
 	CreateUserAndBalance(ctx context.Context, user models.User) (models.User, error)
 }
+
+type Migrator interface {
+	Migrate(ctx context.Context) error
+}

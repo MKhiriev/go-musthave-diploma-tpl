@@ -91,13 +91,11 @@ func (o *orderService) GetOrdersForAccrual(ctx context.Context) ([]models.Order,
 	unprocessedOrders, err := o.orderRepository.GetOrdersByStatuses(ctx, models.NEW, models.PROCESSING)
 	if err != nil {
 		err = fmt.Errorf("error while getting orders by status: %w", err)
-		o.logger.Err(err).Send()
 		return nil, err
 	}
 
 	if len(unprocessedOrders) == 0 {
 		err = ErrNoOrdersForUpdate
-		o.logger.Err(err).Send()
 		return nil, err
 	}
 
@@ -106,7 +104,6 @@ func (o *orderService) GetOrdersForAccrual(ctx context.Context) ([]models.Order,
 		accrual, accrualErr := o.accrualAdapter.GetOrderAccrual(ctx, order.Number)
 		if accrualErr != nil {
 			err = fmt.Errorf("error during getting order accrual: %w", accrualErr)
-			o.logger.Err(err).Send()
 			return nil, err
 		}
 

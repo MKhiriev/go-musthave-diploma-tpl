@@ -9,7 +9,7 @@ type Server struct {
 	server *http.Server
 }
 
-func (s *Server) ServerRun(handler http.Handler, cfg *config.Server) error {
+func (s *Server) ServerRun(handler http.Handler, cfg *config.Config) error {
 	s.server = &http.Server{
 		Addr:    cfg.ServerAddress,
 		Handler: handler,

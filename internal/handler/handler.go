@@ -1,26 +1,22 @@
 package handler
 
 import (
-	"go-musthave-diploma-tpl/internal/logger"
-	"go-musthave-diploma-tpl/internal/service"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	"github.com/rs/zerolog"
 )
 
-type Handler struct {
-	authService       service.AuthService
-	balanceService    service.BalanceService
-	orderService      service.OrderService
-	withdrawalService service.WithdrawalService
-
-	logger *logger.Logger
+type Handlers struct {
+	logger *zerolog.Logger
 }
 
-func NewHandler(services *service.Services, logger *logger.Logger) Handler {
-	logger.Info().Msg("handler created")
-	return Handler{
-		authService:       services.AuthService,
-		balanceService:    services.BalanceService,
-		orderService:      services.OrderService,
-		withdrawalService: services.WithdrawalService,
-		logger:            logger,
-	}
+func NewHandler(logger *zerolog.Logger) Handlers {
+	return Handlers{logger: logger}
+}
+
+func (h *Handlers) Init() *chi.Mux {
+	router := chi.NewRouter()
+	router.Use(middleware.Recoverer)
+
+	return router
 }

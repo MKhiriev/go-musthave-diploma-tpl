@@ -7,11 +7,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-type Logger struct {
-	*zerolog.Logger
-}
-
-func NewLogger(role string) *Logger {
+func NewLogger(role string) *zerolog.Logger {
 	zerolog.SetGlobalLevel(zerolog.DebugLevel)
 	zerolog.CallerMarshalFunc = func(pc uintptr, file string, line int) string {
 		return runtime.FuncForPC(pc).Name() // return function name
@@ -24,5 +20,5 @@ func NewLogger(role string) *Logger {
 		Caller().
 		Logger()
 
-	return &Logger{&logger}
+	return &logger
 }
